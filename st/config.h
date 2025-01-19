@@ -5,8 +5,15 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
+/* static char *font = "scientifica:pixelsize=21:antialias=false:autohint=true"; */
+/* static char *font = "Misc Tamsyn:pixelsize=17:antialias=false:autohint=true"; */
+/* static char *font = "GohuFont 14 Nerd Font Mono:pixelsize=17:antialias=true:autohint=true"; */
+/* static char *font = "Dina:pixelsize=14:antialias=false:autohint=true"; */
 static char *font = "VictorMono Nerd Font:pixelsize=14:antialias=true:autohint=true";
-static char *font2[] = { "NotoColorEmoji:pixelsize=10:antialias=true:autohint=true" };
+/* static char *font = "DepartureMono Nerd Font:pixelsize=11:antialias=true:autohint=true"; */
+/* static char *font = "EffectsEighty:pixelsize=17:antialias=true:autohint=true"; */
+/* static char *font = "ProggyClean Nerd Font:pixelsize=17:antialias=true:autohint=true"; */
+static char *font2[] = { "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
 static int borderpx = 50;
 
 /*
@@ -113,29 +120,22 @@ float alphaUnfocus;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-    /* Normal colors */
-	[0]   = "#171b23",
-	[1]   = "#be5046",
-	[2]   = "#98c379",
-	[3]   = "#d19a66",
-	[4]   = "#61afef",
-	[5]   = "#c678dd",
-	[6]   = "#56b6c2",
-	[7]   = "#828997",
-
-    /* Bright colors */
-	[8]   = "#5c6370",
-	[9]   = "#e06c75",
-	[10]  = "#98c379",
-	[11]  = "#e5c07b",
-	[12]  = "#61afef",
-	[13]  = "#c678dd",
-	[14]  = "#56b6c2",
-	[15]  = "#abb2bf",
-
-    /* Foreground and background */
-	[256] = "#abb2bf",
-	[257] = "#282c34",
+	"#1c1c1c", /* hard contrast: #1d2021 / soft contrast: #32302f */
+	"#cc241d",
+	"#98971a",
+	"#d79921",
+	"#458588",
+	"#b16286",
+	"#689d6a",
+	"#a89984",
+	"#928374",
+	"#fb4934",
+	"#b8bb26",
+	"#fabd2f",
+	"#83a598",
+	"#d3869b",
+	"#8ec07c",
+	"#ebdbb2",
 };
 
 
@@ -143,40 +143,11 @@ static const char *colorname[] = {
  * Default colors (colorname index)
  * foreground, background, cursor, reverse cursor
  */
-/* static const char *colorname[] = { */
-/* 	"#282828", hard contrast: #1d2021 / soft contrast: #32302f */
-/* 	"#cc241d", */
-/* 	"#98971a", */
-/* 	"#d79921", */
-/* 	"#458588", */
-/* 	"#b16286", */
-/* 	"#689d6a", */
-/* 	"#a89984", */
-/* 	"#928374", */
-/* 	"#fb4934", */
-/* 	"#b8bb26", */
-/* 	"#fabd2f", */
-/* 	"#83a598", */
-/* 	"#d3869b", */
-/* 	"#8ec07c", */
-/* 	"#ebdbb2", */
-/* 	[255] = 0, */
-/* 	"#add8e6", 256 -> cursor */
-/* 	"#555555", 257 -> rev cursor*/
-/* 	"#282828", 258 -> bg */
-/* 	"#ebdbb2", 259 -> fg */
-/* }; */
-
-
-/*
- * Default colors (colorname index)
- * foreground, background, cursor, reverse cursor
- */
-unsigned int defaultfg = 256;
-unsigned int defaultbg = 257;
-unsigned int defaultcs = 256;
-unsigned int defaultrcs = 256;
-unsigned int background = 257;
+unsigned int defaultfg = 15;
+unsigned int defaultbg = 0;
+unsigned int defaultcs = 15;
+unsigned int defaultrcs = 15;
+unsigned int background = 0;
 
 /*
  * Default shape of cursor
