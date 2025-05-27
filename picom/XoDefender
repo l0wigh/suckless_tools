@@ -16,32 +16,16 @@
 # squeeze-bottom: Similar to squeeze, but the animation starts from bottom-most y-position
 # zoom: Windows are either created or destroyed from/to their center (not the screen center)
 
-animations = ({
-	triggers = [ "close", "hide" ];
-	preset = "fly-out";
-	direction = "right";
-	duration = 0.3;
-}, {
-	triggers = [ "open", "show" ];
-	preset = "fly-in";
-	direction = "left";
-	duration = 0.3;
-}, {
-	triggers = [ "geometry" ];
-	preset = "geometry-change";
-	duration = 0.42;
-})
-
-# animations = true;
-# animation-stiffness = 90;
-# animation-window-mass = 0.5;
-# animation-dampening = 10;
-# animation-clamping = true;
-# animation-for-transient-window = "slide-up";
-# animation-for-unmap-window = "slide-up";
-# animation-for-workspace-switch-in = "zoom"; #the windows in the workspace that is coming in
-# animation-for-workspace-switch-out = "zoom"; #the windows in the workspace that are coming out
-# animation-for-open-window = "slide-right";
+animations = true;
+animation-stiffness = 90;
+animation-window-mass = 0.5;
+animation-dampening = 10;
+animation-clamping = true;
+animation-for-transient-window = "slide-up";
+animation-for-unmap-window = "slide-up";
+animation-for-workspace-switch-in = "zoom"; #the windows in the workspace that is coming in
+animation-for-workspace-switch-out = "zoom"; #the windows in the workspace that are coming out
+animation-for-open-window = "slide-right";
 
 # animating-rule-open = ["zoom:class_g = 'code'"];
 # animating-rule-unmap = ["zoom:class_g = 'code'"];
@@ -64,7 +48,6 @@ shadow-offset-x = -3;
 shadow-offset-y = -3;
 shadow-exclude = [
 	"class_g = 'dwm'",
-	"class_g = 'Polybar'",
 ];
 
 # Specify a list of conditions of windows that should have no shadow painted over, such as a dock window.
@@ -83,7 +66,7 @@ shadow-exclude = [
 
 # shadow-color-rule = ["#FFFFFF:class_g = 'fly-term'"];
 # shadow-opacity-rule = ["20:class_g = 'fly-term'" ];
-shadow-offset-x-rule = ["-100:class_g = 'Polybar'"];
+shadow-offset-x-rule = ["-15:class_g = 'Polybar'"];
 # shadow-offset-y-rule = ["-100:class_g = 'fly-term'"];
 # shadow-radius-rule = ["100:class_g = 'fly-term'"];
 
@@ -163,9 +146,9 @@ focus-exclude = [ "class_g = 'Cairo-clock'" ];
 # example:
 opacity-rule = [
 	"100:class_g = 'Polybar'",
-	"98:class_g = 'St'",
-	"98:class_g = 'firefox'",
-	"98:class_g = 'Alacritty'",
+	"100:class_g = 'St'",
+	"100:class_g = 'firefox'",
+	"100:class_g = 'Alacritty'",
 ];
 #
 # opacity-rule = []
@@ -231,6 +214,7 @@ rounded-corners-exclude = [
 blur-background-exclude = [
   "window_type = 'dock'",
   "window_type = 'desktop'",
+  "_GTK_FRAME_EXTENTS@:c"
 ];
 
 # blur-method-rule = [ "kawase:class_g = 'fly-term'" ];
@@ -360,7 +344,7 @@ use-damage = true;
 # calls are finished before picom starts drawing. Needed on nvidia-drivers
 # with GLX backend for some users.
 #
-xrender-sync-fence = true
+# xrender-sync-fence = false
 
 # GLX backend: Use specified GLSL fragment shader for rendering window
 # contents. Read the man page for a detailed explanation of the interface.

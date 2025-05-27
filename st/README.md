@@ -1,4 +1,9 @@
-# L0Wigh's build of st - the simple (suckless) terminal
+# L0Wigh's build of st (based on luke smith one) - the simple (suckless) terminal
+
+## Additional stuff from luke smith
+
+- using Ctrl instead of Alt for keybinds
+- Xresources + reload using signals (Had to make it manually since Luke already patched the Xresources without the reloading)
 
 The [suckless terminal (st)](https://st.suckless.org/) with some additional
 features that make it literally the best terminal emulator ever:

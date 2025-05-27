@@ -2263,15 +2263,39 @@ config_init(void)
 	char *resm;
 	XrmDatabase db;
 	ResourcePref *p;
+	Display *dpy;
 
+	dpy = XOpenDisplay(NULL);
 	XrmInitialize();
-	resm = XResourceManagerString(xw.dpy);
+	resm = XResourceManagerString(dpy);
 	if (!resm)
 		return;
 
 	db = XrmGetStringDatabase(resm);
 	for (p = resources; p < resources + LEN(resources); p++)
 		resource_load(db, p->name, p->type, p->dst);
+	XFlush(dpy);
+}
+
+void
+reload(int sig)
+{
+	config_init();
+
+	/* colors, fonts */
+	xloadcols();
+	xunloadfonts();
+	xloadfonts(font, 0);
+
+	/* pretend the window just got resized */
+	cresize(win.w, win.h);
+
+	redraw();
+
+	/* triggers re-render if we're visible. */
+	ttywrite("\033[O", 3, 1);
+
+	signal(SIGUSR1, reload);
 }
 
 void
@@ -2290,6 +2314,8 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
+	int i;
+	char *colval;
 	xw.l = xw.t = 0;
 	xw.isfixed = False;
 	xsetcursor(cursorshape);
@@ -2337,6 +2363,11 @@ main(int argc, char *argv[])
 	case 'v':
 		die("%s " VERSION "\n", argv0);
 		break;
+	case 'C':
+		colval = strtok(EARGF(usage()), "@");
+		i = atoi(strtok(NULL, "@"));
+		colorname[i] = colval;
+		break;
 	default:
 		usage();
 	} ARGEND;
@@ -2355,6 +2386,7 @@ run:
 		die("Can't open display\n");
 
 	config_init();
+	signal(SIGUSR1, reload);
 	cols = MAX(cols, 1);
 	rows = MAX(rows, 1);
 	defaultbg = MAX(LEN(colorname), 256);

@@ -1,4 +1,4 @@
-dmenu - dynamic menu
+dmenu - dynamic menu (patched by L0Wigh)
 ====================
 dmenu is an efficient dynamic menu for X.
 
@@ -22,3 +22,11 @@ Afterwards enter the following command to build and install dmenu
 Running dmenu
 -------------
 See the man page for details.
+
+Patches
+-------
+- Xresources
+- Center
+- Border
+- Desktop only
+- Fix to show the lines under the prompt without any offset
