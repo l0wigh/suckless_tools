@@ -38,6 +38,9 @@ sed -i.bak '/fluorite.border_focused/c\fluorite.border_focused: 0x42be65'     /t
 sed -i.bak '/fluorite.border_unfocused/c\fluorite.border_unfocused: 0x262626' /tmp/Xresources_switcher
 sed -i.bak '/fluorite.border_inactive/c\fluorite.border_inactive: 0x262626'   /tmp/Xresources_switcher
 
+# Zed Editor
+sed -i.bak '/"light":/c\"light": "Oxocarbon Dark (IBM Carbon)",' ~/.config/zed/settings.json
+
 # Dunst
 cp ~/.config/dunst/oxocarbon ~/.config/dunst/dunstrc
 

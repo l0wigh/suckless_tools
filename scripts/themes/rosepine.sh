@@ -38,6 +38,9 @@ sed -i.bak '/fluorite.border_focused/c\fluorite.border_focused: 0xeb6f92'     /t
 sed -i.bak '/fluorite.border_unfocused/c\fluorite.border_unfocused: 0x524f67' /tmp/Xresources_switcher
 sed -i.bak '/fluorite.border_inactive/c\fluorite.border_inactive: 0x21202e'   /tmp/Xresources_switcher
 
+# Zed Editor
+sed -i.bak '/"light":/c\"light": "Rosé Pine",' ~/.config/zed/settings.json
+
 # Dunst
 cp ~/.config/dunst/rosepine ~/.config/dunst/dunstrc
 
@@ -45,4 +48,4 @@ cp ~/.config/dunst/rosepine ~/.config/dunst/dunstrc
 cp /tmp/Xresources_switcher ~/.Xresources
 
 # Background
-feh --bg-fill ~/wallpapers/rosepine_test.png
+feh --bg-fill ~/wallpapers/rosepine2.png

@@ -1,0 +1,1 @@
+convert the python script for the battery into a bash or C using inotify

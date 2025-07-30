@@ -6,7 +6,8 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 // static char *font = "scientifica:pixelsize=21:antialias=false:autohint=true";
-// static char *font = "Misc Tamsyn:pixelsize=18:antialias=true:autohint=true";
+static char *font = "Misc Tamsyn:pixelsize=17:antialias=true:autohint=true";
+// static char *font = "Tamzen:pixelsize=17:antialias=false:autohint=true";
 // static char *font = "Misc Fixed:pixelsize=18:antialias=true:autohint=true";
 // static char *font = "GohuFont 14 Nerd Font Mono:pixelsize=17:antialias=true:autohint=true";
 // static char *font = "Dina:pixelsize=14:antialias=false:autohint=true";
@@ -15,9 +16,9 @@
 // static char *font = "EffectsEighty:pixelsize=17:antialias=true:autohint=true";
 // static char *font = "ProggyClean Nerd Font:pixelsize=17:antialias=true:autohint=true";
 // static char *font = "RobotoMono Nerd Font:pixelsize=16:antialias=true:autohint=true";
-static char *font = "BlexMono Nerd Font:pixelsize=16:antialias=true:autohint=true";
-// static char *font = "Maple Mono:pixelsize=16:antialias=true:autohint=true";
-static char *font2[] = { "JoyPixels:pixelsize=10:antialias=true:autohint=true" };
+// static char *font = "BlexMono Nerd Font:pixelsize=16:antialias=true:autohint=true";
+// static char *font = "Maple Mono:pixelsize=14:antialias=true:autohint=true";
+static char *font2[] = { "JoyPixels:pixelsize=14:antialias=true:autohint=true" };
 static int borderpx = 50;
 
 /*

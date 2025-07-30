@@ -37,6 +37,9 @@ sed -i.bak '/fluorite.border_focused/c\fluorite.border_focused: 0x8CAAEE'     /t
 sed -i.bak '/fluorite.border_unfocused/c\fluorite.border_unfocused: 0x5c5f77' /tmp/Xresources_switcher
 sed -i.bak '/fluorite.border_inactive/c\fluorite.border_inactive: 0x3c3f55'   /tmp/Xresources_switcher
 
+# Zed Editor
+sed -i.bak '/"light":/c\"light": "Catppuccin Frappé",' ~/.config/zed/settings.json
+
 # Dunst
 cp ~/.config/dunst/catppuccin ~/.config/dunst/dunstrc
 

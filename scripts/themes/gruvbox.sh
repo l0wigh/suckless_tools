@@ -37,6 +37,9 @@ sed -i.bak '/fluorite.border_focused/c\fluorite.border_focused: 0x458588'     /t
 sed -i.bak '/fluorite.border_unfocused/c\fluorite.border_unfocused: 0x665c54' /tmp/Xresources_switcher
 sed -i.bak '/fluorite.border_inactive/c\fluorite.border_inactive: 0x665c54'   /tmp/Xresources_switcher
 
+# Zed Editor
+sed -i.bak '/"light":/c\"light": "Gruvbox Dark Hard",' ~/.config/zed/settings.json
+
 # Dunst
 cp ~/.config/dunst/gruvbox ~/.config/dunst/dunstrc
 
