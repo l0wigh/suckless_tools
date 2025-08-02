@@ -12,11 +12,15 @@ EffectsEighty
 ProggyClean Nerd Font
 RobotoMono Nerd Font
 BlexMono Nerd Font
+TempleOS
+scientifica
 Maple Mono" | dmenu -b -i -l 10 -p "Font Name: ") || exit 0
 
 	SIZE="$(echo "" | dmenu -b -i -p "Size: " <&-)" || exit 0
 
 	if [ "$FONT" = "Tamsyn" ]; then
+		ALIAS="false"
+	elif [ "$FONT" = "scientifica" ]; then
 		ALIAS="false"
 	else
 		ALIAS="true"
