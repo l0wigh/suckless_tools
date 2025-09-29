@@ -1,48 +1,33 @@
 #!/bin/bash
 
-# Polybar
-cp ~/.config/polybar/oxocarbon.ini ~/.config/polybar/config.ini
-killall polybar && polybar &
-
-# St colors
-sed -i.bak '/st.color0:/c\st.color0:   #161616'  /tmp/Xresources_switcher
-sed -i.bak '/st.color1:/c\st.color1:   #33b1ff'  /tmp/Xresources_switcher
-sed -i.bak '/st.color2:/c\st.color2:   #be95ff'  /tmp/Xresources_switcher
-sed -i.bak '/st.color3:/c\st.color3:   #42be65'  /tmp/Xresources_switcher
-sed -i.bak '/st.color4:/c\st.color4:   #78a9ff'  /tmp/Xresources_switcher
-sed -i.bak '/st.color5:/c\st.color5:   #82cfff'  /tmp/Xresources_switcher
-sed -i.bak '/st.color6:/c\st.color6:   #3ddbd9'  /tmp/Xresources_switcher
-sed -i.bak '/st.color7:/c\st.color7:   #f2f4f8'  /tmp/Xresources_switcher
-sed -i.bak '/st.color8:/c\st.color8:   #525252'  /tmp/Xresources_switcher
-sed -i.bak '/st.color9:/c\st.color9:   #33b1ff'  /tmp/Xresources_switcher
-sed -i.bak '/st.color10:/c\st.color10: #be95ff'  /tmp/Xresources_switcher
-sed -i.bak '/st.color11:/c\st.color11: #42be65'  /tmp/Xresources_switcher
-sed -i.bak '/st.color12:/c\st.color12: #78a9ff'  /tmp/Xresources_switcher
-sed -i.bak '/st.color13:/c\st.color13: #82cfff'  /tmp/Xresources_switcher
-sed -i.bak '/st.color14:/c\st.color14: #08bdba'  /tmp/Xresources_switcher
-sed -i.bak '/st.color15:/c\st.color15: #ffffff'  /tmp/Xresources_switcher
-
-# dmenu colors
-sed -i.bak '/dmenu.normbgcolor:/c\dmenu.normbgcolor: #161616' /tmp/Xresources_switcher
-sed -i.bak '/dmenu.normfgcolor:/c\dmenu.normfgcolor: #888888' /tmp/Xresources_switcher
-sed -i.bak '/dmenu.selbgcolor:/c\dmenu.selbgcolor: #42be65' /tmp/Xresources_switcher
+# Global colors
+sed -i '/#define c0/c\#define c0 #161616'  /tmp/Xresources_switcher
+sed -i '/#define c1/c\#define c1 #33b1ff'  /tmp/Xresources_switcher
+sed -i '/#define c2/c\#define c2 #be95ff'  /tmp/Xresources_switcher
+sed -i '/#define c3/c\#define c3 #42be65'  /tmp/Xresources_switcher
+sed -i '/#define c4/c\#define c4 #78a9ff'  /tmp/Xresources_switcher
+sed -i '/#define c5/c\#define c5 #82cfff'  /tmp/Xresources_switcher
+sed -i '/#define c6/c\#define c6 #3ddbd9'  /tmp/Xresources_switcher
+sed -i '/#define c7/c\#define c7 #f2f4f8'  /tmp/Xresources_switcher
+sed -i '/#define c8/c\#define c8 #525252'  /tmp/Xresources_switcher
+sed -i '/#define c9/c\#define c9 #33b1ff'  /tmp/Xresources_switcher
+sed -i '/#define ca/c\#define ca #be95ff'  /tmp/Xresources_switcher
+sed -i '/#define cb/c\#define cb #42be65'  /tmp/Xresources_switcher
+sed -i '/#define cc/c\#define cc #78a9ff'  /tmp/Xresources_switcher
+sed -i '/#define cd/c\#define cd #82cfff'  /tmp/Xresources_switcher
+sed -i '/#define ce/c\#define ce #08bdba'  /tmp/Xresources_switcher
+sed -i '/#define cf/c\#define cf #ffffff'  /tmp/Xresources_switcher
+sed -i '/#define pr/c\#define pr #42be65'  /tmp/Xresources_switcher
 
 # Neovim
-cp ~/.config/nvim/lua/oxocarbon ~/.config/nvim/lua/theme.lua
+sed -i '/vim.cmd("set/c\vim.cmd("set background=dark")' ~/.config/nvim/lua/theme.lua
+sed -i '/vim.cmd.color/c\vim.cmd.colorscheme("oxocarbon")' ~/.config/nvim/lua/theme.lua
 
 # Helix
-sed -i.bak '/theme =/c\theme = "oxocarbon"' ~/.config/helix/config.toml
-
-# Fluorite
-sed -i.bak '/fluorite.border_focused/c\fluorite.border_focused: 0x42be65'     /tmp/Xresources_switcher
-sed -i.bak '/fluorite.border_unfocused/c\fluorite.border_unfocused: 0x262626' /tmp/Xresources_switcher
-sed -i.bak '/fluorite.border_inactive/c\fluorite.border_inactive: 0x262626'   /tmp/Xresources_switcher
+sed -i '/theme =/c\theme = "oxocarbon"' ~/.config/helix/config.toml
 
 # Zed Editor
-sed -i.bak '/"light":/c\"light": "Oxocarbon Dark (IBM Carbon)",' ~/.config/zed/settings.json
-
-# Dunst
-cp ~/.config/dunst/oxocarbon ~/.config/dunst/dunstrc
+sed -i '/"light":/c\"light": "Oxocarbon Dark (IBM Carbon)",' ~/.config/zed/settings.json
 
 # Apply modifications
 cp /tmp/Xresources_switcher ~/.Xresources
