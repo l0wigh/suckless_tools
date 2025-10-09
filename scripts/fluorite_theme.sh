@@ -8,6 +8,7 @@ iceberg
 rosepine
 oxocarbon
 catppuccin
+vscode
 edge-light
 solarized-light
 melange-light" | dmenu -c -l $COUNT -p "Theme: ") || exit 0
