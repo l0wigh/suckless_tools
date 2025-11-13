@@ -1,11 +1,11 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const char font[]        = "monospace:size=9";
-static const char* normbgcolor  = "#282c34";
-static const char* normfgcolor  = "#707880";
-static const char* selfgcolor   = "#FFFFFF";
-static const char* selbgcolor   = "#005577";
+static const char* font         = "monospace:size=9";
+static const char* normbgcolor  = "#222222";
+static const char* normfgcolor  = "#cccccc";
+static const char* selbgcolor   = "#555555";
+static const char* selfgcolor   = "#ffffff";
 static const char* urgbgcolor   = "#111111";
 static const char* urgfgcolor   = "#cc0000";
 static const char before[]      = "<";
@@ -36,8 +36,8 @@ static Bool npisrelative  = False;
 #define MODKEY ControlMask
 static const Key keys[] = {
 	/* modifier             key        function     argument */
-	{ MODKEY,     XK_t, focusonce,   { 0 } },
-	{ MODKEY,     XK_t, spawn,       { 0 } },
+	{ MODKEY,     XK_Return, focusonce,   { 0 } },
+	{ MODKEY,     XK_Return, spawn,       { 0 } },
 
 	{ MODKEY|ShiftMask,     XK_m,      rotate,      { .i = +1 } },
 	{ MODKEY|ShiftMask,     XK_j,      rotate,      { .i = -1 } },
