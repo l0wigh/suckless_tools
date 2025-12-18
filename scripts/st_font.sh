@@ -4,7 +4,7 @@ fullfont() {
 	FILE="/home/thomas/.Xresources"
 
 	FONT=$(printf "Misc Tamsyn
-Tamzen
+Terminus
 Dina
 VictorMono Nerd Font
 DepartureMono Nerd Font

@@ -33,4 +33,4 @@ sed -i '/"light":/c\"light": "Catppuccin Frappé",' ~/.config/zed/settings.json
 cp /tmp/Xresources_switcher ~/.Xresources
 
 # Background
-feh --bg-fill ~/wallpapers/melange-light.jpg
+feh --bg-fill ~/wallpapers/melange-new.jpg

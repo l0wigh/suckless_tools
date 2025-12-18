@@ -32,6 +32,7 @@ $HOME/tools/suckless_tools/scripts/themes/$SELECTED.sh
 # Reload St and nvim
 pidof nvim | xargs kill -s USR1
 pidof hx | xargs kill -s USR1
+pidof tabbed | xargs kill -s USR1
 sleep 0.1
 pidof st | xargs kill -s USR1
 $HOME/tools/suckless_tools/scripts/multi_polybar.sh
