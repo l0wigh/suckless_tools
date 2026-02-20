@@ -5,13 +5,17 @@ COUNT=4
 
 SELECTED=$(printf "gruvbox
 iceberg
+sakura
 rosepine
 oxocarbon
 catppuccin
 vscode
+cole
+cursor
 tokyonight-storm
 edge-light
 solarized-light
+solarized-dark
 melange-light" | dmenu -c -l $COUNT -p "Theme: ") || exit 0
 
 $HOME/tools/suckless_tools/scripts/themes/$SELECTED.sh

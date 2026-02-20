@@ -15,6 +15,7 @@ BlexMono Nerd Font
 TempleOS
 scientifica
 UW Ttyp0
+Fira Code
 Maple Mono" | dmenu -b -i -l 10 -p "Font Name: ") || exit 0
 
 	SIZE="$(echo "" | dmenu -b -i -p "Size: " <&-)" || exit 0
