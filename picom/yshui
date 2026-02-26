@@ -1,0 +1,142 @@
+#################################
+#           Animations          #
+#################################
+
+animations = (
+	{
+		triggers = [ "open", "show" ];
+		v-timing = {
+			curve = "cubic-bezier(0.10, 0.9, 0.1, 1.08)";
+			duration = 0.5;
+			start = "window-height * 0 + window-y * 0 + window-width * -1 + window-x * -1";
+			end = 0;
+		};
+		offset-x = "v-timing * 1";
+		offset-y = "v-timing * 0";
+		shadow-offset-x = "offset-x";
+		shadow-offset-y = "offset-y";
+	},
+	{
+		triggers = [ "close", "hide" ];
+		v-timing = {
+			curve = "cubic-bezier(0.21, 0.02, 0.76, 0.36)";
+			duration = 0.2;
+			start = 0;
+			end = "window-height * 0 + window-y * 0 + window-width * 1 + window-x * 0";
+		};
+		offset-x = "v-timing * 1";
+		offset-y = "v-timing * 0";
+		shadow-offset-x = "offset-x";
+		shadow-offset-y = "offset-y";
+		opacity = {
+			start = "window-raw-opacity-before";
+			end = "window-raw-opacity-before";
+			duration = 0.2;
+		};
+		shadow-opacity = "opacity";
+		blur-opacity = "opacity";
+	},
+	{
+		triggers = [ "geometry" ]
+		scale-x = {
+			curve = "cubic-bezier(0.10, 0.9, 0.1, 1.08)";
+			start = "window-width-before / window-width";
+			end = 1;
+			duration = 0.5
+		};
+		scale-y = {
+			curve = "cubic-bezier(0.10, 0.9, 0.1, 1.08)";
+			start = "window-height-before / window-height";
+			end = 1;
+			duration = 0.5
+		};
+		offset-x = {
+			curve = "cubic-bezier(0.10, 0.9, 0.1, 1.08)";
+			start = "window-x-before - window-x";
+			duration = 0.5
+				end = 0;
+		};
+		offset-y = {
+			curve = "cubic-bezier(0.10, 0.9, 0.1, 1.08)";
+			start = "window-y-before - window-y";
+			duration = 0.5
+				end = 0;
+		};
+		shadow-scale-y = "scale-y";
+		shadow-scale-x = "scale-x";
+		shadow-offset-y = "offset-y";
+		shadow-offset-x = "offset-x";
+	},
+)
+
+#################################
+#             Rules             #
+#################################
+
+rules = (
+  {
+    match = "window_type = 'normal' || window_type = 'dialog'";
+    fade = true;
+    shadow = true;
+    blur-background = true;
+    corner-radius = 6;
+  },
+  {
+    match = "class_g = 'Polybar'";
+    shadow-offset-x = -100;
+    corner-radius = 6;
+  },
+  {
+    match = "class_g = 'dwm' || name = 'xflash' || name = 'no_rounding'";
+    shadow = false;
+    corner-radius = 0;
+  },
+  {
+    match = "class_g = 'St' || class_g = 'Alacritty' || class_g = 'discord' || class_g = 'dev.zed.Zed'";
+    opacity = 0.85;
+  },
+  {
+    match = "class_g = 'firefox' || class_g = 'Polybar'";
+    opacity = 1.0;
+  },
+  {
+    match = "name = 'polybar_dock'";
+    corner-radius = 16;
+  },
+  {
+    match = "window_type = 'dock' || window_type = 'desktop'";
+    blur-background = false;
+    shadow = false;
+  }
+)
+
+#################################
+#      Global Configuration     #
+#################################
+
+backend = "egl";
+vsync = true;
+use-damage = true;
+dithered-present = false;
+
+fading = true;
+fade-in-step = 0.03;
+fade-out-step = 0.03;
+
+blur: {
+  method = "dual_kawase";
+  strength = 8;
+  background = true;
+};
+
+shadow-radius = 12;
+shadow-offset-x = -5;
+shadow-offset-y = -5;
+shadow-opacity = 0.8;
+crop-shadow-to-monitor = true;
+
+detect-rounded-corners = true;
+detect-client-opacity = true;
+detect-transient = true;
+xrender-sync-fence = true;
+log-level = "warn";

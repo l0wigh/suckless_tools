@@ -17,7 +17,7 @@ sed -i '/#define cc/c\#define cc #a1b7d1' /tmp/Xresources_switcher
 sed -i '/#define cd/c\#define cd #c9b0d5' /tmp/Xresources_switcher
 sed -i '/#define ce/c\#define ce #90c0c0' /tmp/Xresources_switcher
 sed -i '/#define cf/c\#define cf #e8e3e0' /tmp/Xresources_switcher
-sed -i '/#define pr/c\#define pr #f3a3b5' /tmp/Xresources_switcher
+sed -i '/#define pr/c\#define pr #b491c3' /tmp/Xresources_switcher
 
 # Neovim
 sed -i '/vim.cmd("set/c\vim.cmd("set background=dark")' ~/.config/nvim/lua/theme.lua

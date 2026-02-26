@@ -6,6 +6,7 @@ COUNT=4
 SELECTED=$(printf "gruvbox
 iceberg
 sakura
+sakura-light
 rosepine
 oxocarbon
 catppuccin
