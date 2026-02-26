@@ -1,37 +1,38 @@
-#define c0 #1c1c1c
-#define c1 #cc241d
-#define c2 #98971a
-#define c3 #d79921
-#define c4 #458588
-#define c5 #b16286
-#define c6 #689d6a
-#define c7 #a89984
-#define c8 #928374
-#define c9 #fb4934
-#define ca #b8bb26
-#define cb #fabd2f
-#define cc #83a598
-#define cd #d3869b
-#define ce #8ec07c
-#define cf #ebdbb2
-#define pr #458588
+#define c0 #161616
+#define c1 #e87a90
+#define c2 #7ea95e
+#define c3 #d8a07d
+#define c4 #82a0c2
+#define c5 #b491c3
+#define c6 #72a9a9
+#define c7 #c0b7b1
+#define c8 #313131
+#define c9 #ef97a8
+#define ca #98bc83
+#define cb #e3b89e
+#define cc #a1b7d1
+#define cd #c9b0d5
+#define ce #90c0c0
+#define cf #e8e3e0
+#define pr #b491c3
 
-st.color0:  c0
-st.color1:  c1
-st.color2:  c2
-st.color3:  c3
-st.color4:  c4
-st.color5:  c5
-st.color6:  c6
-st.color7:  c7
-st.color8:  c8
-st.color9:  c9
-st.color10: ca
-st.color11: cb
-st.color12: cc
-st.color13: cd
-st.color14: ce
-st.color15: cf
+*.color0:  c0
+*.color1:  c1
+*.color2:  c2
+*.color3:  c3
+*.color4:  c4
+*.color5:  c5
+*.color6:  c6
+*.color7:  c7
+*.color8:  c8
+*.color9:  c9
+*.color10: ca
+*.color11: cb
+*.color12: cc
+*.color13: cd
+*.color14: ce
+*.color15: cf
+st.font: BlexMono Nerd Font:pixelsize=16:antialias=true:autohint=true
 
 fluorite.border_width: 2
 fluorite.border_focused: pr
@@ -40,7 +41,6 @@ fluorite.gaps: 5
 fluorite.stack_offset: 5
 fluorite.default_master_offset: 0
 
-st.font: Misc Tamsyn:pixelsize=18:antialias=true:autohint=true
 
 dmenu.normbgcolor: c0
 dmenu.normfgcolor: c7
