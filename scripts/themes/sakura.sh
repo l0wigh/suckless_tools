@@ -28,7 +28,7 @@ sed -i '/vim.cmd.color/c\vim.cmd.colorscheme("sakura")' ~/.config/nvim/lua/theme
 sed -i '/theme =/c\theme = "sakura"' ~/.config/helix/config.toml
 
 # Zed Editor
-sed -i '/"light":/c\"light": "Tokyo Night Storm",' ~/.config/zed/settings.json
+sed -i '/"light":/c\"light": "Sakura",' ~/.config/zed/settings.json
 
 # Apply modifications
 cp /tmp/Xresources_switcher ~/.Xresources

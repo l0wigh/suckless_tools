@@ -1,0 +1,268 @@
+#*********************************
+# GENERAL SETTINGS
+#*********************************
+AutoRelativeResize # No cross of window edge needed for resize
+DecorateTransients # Also decorate transient windows
+NoBackingStore # Minimize repainting of menus
+NoCaseSensitive # Case ignoring for icon manager
+NoDefaults # No default title buttons, we will define them
+NoGrabServer # Do not grab the server when not needed
+NoHighLight # Dont change border of windows on mouse over
+NoTitleHighlight # No highlight for titlebar of selected window
+OpaqueMove # Move window instead of outline
+RandomPlacement # Windows without geometry are placed randomly
+RestartPreviousState # Try to restart defaults from last x session
+UsePPosition "on" # Honor placement
+# NoIconManagers # No icon manager is showed
+IconifyByUnMapping # Dont try to map any icons?
+NoDefaults # Don't use WM default icons and bindings
+DontMoveOff # Windows can't move outside the screen
+IconManagerGeometry "1200x10+0+1176" 10
+IconManagerDontShow {"conky" "xclock"}
+ClientBorderWidth {"conky"}
+InterpolateMenuColors
+
+#*********************************
+# WINDOW BORDERS ETC
+#*********************************
+BorderWidth 1 # Number of pixels for entire window border
+FramePadding 8 # Number of pixels between titlebar buttons and frame
+MenuBorderWidth 4 # Number of pixels for menu border
+NoMenuShadows # No shadow behind the menu
+TitleButtonBorderWidth 0 # Number of pixels for button border
+ButtonIndent 0 # Larger seems to squash buttons together
+TitlePadding 8 # Number of pixels around title buttons
+
+#*********************************
+# TITLE BAR BUTTONS
+#*********************************
+IconDirectory "~/.twm/icons/"                     # Dir for own icon buttons
+LeftTitleButton "resize.xbm"=f.resize               # Northwest arrow.xbm file
+LeftTitleButton "wmenu.xbm"=f.menu "WindowMenu"           # Burger menu wmenu.xbm file
+RightTitleButton "minimize.xbm"=f.iconify          # Down chevron .xbm file
+
+# RightTitleButton "maximize.xbm"=f.fullzoom         # Up chevron .xbm file
+# Above takes 2 clicks to restore [feature]
+# Below takes 1 click - see later function
+
+RightTitleButton "maximize.xbm"=f.function "maximize"   # Up chevron .xbm file
+
+RightTitleButton "close.xbm"=f.delete              # X character .xbm file
+Pixmaps {
+    TitleHighlight    "titlebar.xbm"               # Stippled when enabled
+    BorderTile    "" }
+
+#*********************************
+# COLOR SETTINGS
+#*********************************
+#*********************************
+# COLOR SETTINGS
+#*********************************
+Color {
+    BorderColor           "#82a0c2" # c4 (Bleu doux)
+    DefaultBackground     "#161616" # c0 (Fond sombre)
+    DefaultForeground     "#c0b7b1" # c7 (Texte clair)
+
+    TitleBackground       "#e87a90" # c0 (Barre titre sombre)
+    TitleForeground       "#161616" # c1/pr (Rose Sakura)
+
+    MenuTitleBackground   "#e87a90" # c1 (Titre menu Rose)
+    MenuTitleForeground   "#161616" # c0 (Texte titre menu sombre)
+
+    MenuBackground        "#161616" # c0 (Fond menu sombre)
+    MenuForeground        "#e87a90" # c7 (Texte menu clair)
+
+    MenuBorderColor       "#161616" # c4 (Bordure menu bleue)
+    MenuShadowColor       "#000000" # Noir pur pour l'ombre
+
+    IconManagerBackground "#161616" # c0
+    IconManagerForeground "#82a0c2" # c4
+
+    PointerForeground     "#e87a90" # c1 (Curseur Rose)
+    PointerBackground     "#161616" # c0
+}
+
+#*********************************
+# FONT SETTINGS
+#*********************************
+
+TitleFont       "-misc-tamsyn-medium-r-normal--18-*-*-*-c-*-iso8859-1"
+ResizeFont      "-misc-tamsyn-medium-r-normal--18-*-*-*-c-*-iso8859-1"
+MenuFont        "-misc-tamsyn-medium-r-normal--18-*-*-*-c-*-iso8859-1"
+IconManagerFont "-misc-tamsyn-medium-r-normal--18-*-*-*-c-*-iso8859-1"
+
+#*********************************
+# CURSOR ICON SETTINGS
+#*********************************
+
+Cursors {
+Frame "top_left_arrow"
+Title "top_left_arrow"
+Icon "top_left_arrow"
+IconMgr "top_left_arrow"
+Move "fleur"
+Resize "sizing"
+Menu "top_left_arrow"
+Button "top_left_arrow"
+Wait "top_left_arrow"
+Select "dot"
+Destroy "pirate"
+}
+
+#*********************************
+# NO TITLE BAR SETTINGS
+#*********************************
+NoTitle {
+"aterm"
+"conky"
+"xclock"
+"xmessage"
+"TWM Icon Manager"
+"polybar"
+}
+
+#*********************************
+# TAB STYLE TITLE BARS
+#*********************************
+# SqueezeTitle {""} 
+
+#*********************************
+# AUTORAISE WINDOWS
+#*********************************
+Autoraise { "" }
+
+#*********************************
+#  CURSOR TO WINDOW ON DE-ICONIFY
+#*********************************
+WarpCursor { "xterm" }
+
+#*************************************************************************
+# MOUSE SETTINGS AND WINDOW BEHAVIOURS
+#*************************************************************************
+#  Button1=left, Button2=middle, Button3=right, m=alt, c=ctrl, s=shift
+
+# The root window actions i.e. clicking on the desktop backgound
+# Right click menu ala Fluxbox 
+Button3 = : root : f.menu "RootMenu"
+
+# Wheel button system menu
+Button2 = : root : f.menu "System"
+
+# Wheel button on Window to bring forward
+Button2 = : window : f.raise
+
+# Left click on desktop to bring up window list
+Button1 = : root : f.menu "TwmWindows"
+
+# Left click the window title to lower / raise + gain focus or move
+Movedelta 1
+Button1=    :title: f.function "raise-lower-move"
+Function "raise-lower-move" { f.move f.raiselower }
+
+# Middle click the window title for options for individual windows
+Button2= : title|frame : f.menu "WindowMenu"
+
+# Right click window title to resize the window by mousing beyond frame
+Button3 = : title|frame : f.resize
+
+# Hold alt key and left click to move entire window
+Button1 = m : window : f.move
+
+# Hold shift key and right click / move to resize. Best near edges.
+Button3 = s : window : f.resize
+
+# Hold Alt and Tab cycles through windows bringing up focus
+Function "winup" { f.circleup }
+"Tab" = m : root|window|frame|title : f.function "winup"
+
+# Hold Alt plus left click window title to maximize window vertically
+Button1 = m : title|frame : f.zoom
+
+# Hold Alt plus right click window title to maximize window horizontally
+Button3 = m : title|frame : f.horizoom
+
+# Click to de-iconfy using IconManager
+Button1 = : iconmgr : f.iconify
+
+DefaultFunction f.nop
+
+#*********************************************************************
+# KEYBINDINGS AND FUNCTIONS FOR VDESK http://offog.org/code/vdesk.html
+#*********************************************************************
+# Change Virtual Desktops with vdesk
+
+function "desktop-1" {
+f.exec "xmessage -center -timeout 1 -buttons OK DESKTOP NO: 1 &"
+f.exec "vdesk 1"
+}
+function "desktop-2" {
+f.exec "xmessage -center -timeout 1 -buttons OK DESKTOP NO: 2 &"
+f.exec "vdesk 2" 
+}
+function "desktop-3" {
+f.exec "xmessage -center -timeout 1 -buttons OK DESKTOP NO: 3 &"
+f.exec "vdesk 3" 
+}
+function "desktop-4" {
+f.exec "xmessage -center -timeout 1 -buttons OK DESKTOP NO: 4 &"
+f.exec "vdesk 4"
+}
+
+"1" = c : all : f.function "desktop-1"
+"2" = c : all : f.function "desktop-2"
+"3" = c : all : f.function "desktop-3"
+"4" = c : all : f.function "desktop-4"
+
+function "next" {
+f.exec "A=$((`vdesk`+1)); if [ $A = 5 ] ; then A=1 ; fi ; vdesk $A"
+f.exec "B=$((`vdesk`)); xmessage -center -timeout 1 -buttons OK DESKTOP NO: $B &"
+}
+
+function "prev" {
+f.exec "A=$((`vdesk`-1)); if [ $A = 0 ] ; then A=4 ; fi ; vdesk $A"
+f.exec "B=$((`vdesk`)); xmessage -center -timeout 1 -buttons OK DESKTOP NO: $B &"
+}
+
+"Right" = c : all : f.function "next"
+"Left"  = c : all : f.function "prev"
+
+#*********************************
+# FUNCTION FOR MAXIMISE
+#*********************************
+# See note in Title Bar Buttons
+Function "maximize" { f.fullzoom f.focus f.nop }
+
+
+#*********************************
+# THE POPUP DESKTOP MENU
+#*********************************
+
+menu "RootMenu" {
+"Terminal"       f.exec "st &"
+"Internet"       f.exec "firefox &"
+"Application"    f.exec "dmenu_run_desktop &"
+"Command"        f.exec "dmenu_run &"
+"Restart"        f.restart
+"Quit"           f.quit
+}
+
+menu "System" {
+">> Load Config" f.twmrc
+">> Edit Config" f.exec "xfw ~/.twmrc &"
+">> Hide Icomgr" f.hideiconmgr
+">> End Task"    f.exec "xkill &"
+">> Restart"     f.restart
+">> LCD Off"     f.exec "xset -display :0 dpms force off &"
+">> Saver 2m"      f.exec "xset s 120 120 -display $DISPLAY &"
+">> Saver 10m"   f.exec "xset s 600 600 -display $DISPLAY &"
+}
+
+menu "WindowMenu" {
+"Vertical"   f.zoom
+"Horizontal" f.horizoom
+"Left"       f.leftzoom
+"Right"      f.rightzoom
+"Top"        f.topzoom
+"Bottom"     f.bottomzoom
+"AutoRaise"  f.autoraise
+}

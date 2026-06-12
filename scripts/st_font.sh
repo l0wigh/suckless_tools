@@ -12,6 +12,7 @@ EffectsEighty
 ProggyClean Nerd Font
 RobotoMono Nerd Font
 BlexMono Nerd Font
+Jetbrains Mono
 TempleOS
 scientifica
 UW Ttyp0

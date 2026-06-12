@@ -1,0 +1,4 @@
+#define sticky_width 7
+#define sticky_height 7
+static unsigned char sticky_bits[] = {
+ 0x7F, 0x01, 0x01, 0x7F, 0x40, 0x40, 0x7F };

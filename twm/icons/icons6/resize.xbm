@@ -1,0 +1,4 @@
+#define resize_width 7
+#define resize_height 7
+static unsigned char resize_bits[] = {
+  0x0f, 0x03, 0x05, 0x09, 0x10, 0x20, 0x40, };
