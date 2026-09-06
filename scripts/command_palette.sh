@@ -2,7 +2,6 @@
 
 COMMAND=$(printf "Fluorite Settings
 Theme Selector
-Polybar Selector
 Color Picker
 Font Picker
 Notepad
@@ -14,7 +13,6 @@ Kill selected window" | dmenu -i -c -l 5 -p "Command Palette: ") || exit 0
 case "$COMMAND" in
     "Fluorite Settings")            st -e fish -c 'nv ~/.config/fluorite/fluorite.conf' ;;
     "Theme Selector")               ~/tools/suckless_tools/scripts/fluorite_theme.sh ;;
-    "Polybar Selector")             ~/tools/suckless_tools/scripts/dmenu_polybar_style.sh ;;
     "Color Picker")                 ~/tools/suckless_tools/scripts/colorpicker.sh ;;
     "Font Picker")                  ~/tools/suckless_tools/scripts/st_font.sh font ;;
     "Quick SSH")                    ~/tools/suckless_tools/scripts/quick_ssh.sh ~/notes/ssh.qk ;;

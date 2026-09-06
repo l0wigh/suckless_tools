@@ -1,0 +1,32 @@
+singleton Theme Theme.qml
+singleton Wm Wm.qml
+singleton Sys Sys.qml
+singleton Popouts Popouts.qml
+singleton Notifs Notifs.qml
+Bar Bar.qml
+BarModule BarModule.qml
+Tags Tags.qml
+LayoutButton LayoutButton.qml
+FluoriteScratchpads FluoriteScratchpads.qml
+Commands Commands.qml
+Media Media.qml
+MediaPopup MediaPopup.qml
+Volume Volume.qml
+Network Network.qml
+Tray Tray.qml
+Clock Clock.qml
+CalendarPopup CalendarPopup.qml
+Launcher Launcher.qml
+AppLauncherPopup AppLauncherPopup.qml
+WallpaperPicker WallpaperPicker.qml
+Battery Battery.qml
+BatteryPopup BatteryPopup.qml
+Popout Popout.qml
+TweakSlider TweakSlider.qml
+Notifications Notifications.qml
+NotifPopup NotifPopup.qml
+NetworkPopup NetworkPopup.qml
+VolumePopup VolumePopup.qml
+ScratchpadPopup ScratchpadPopup.qml
+Osd Osd.qml
+WifiAuthDialog WifiAuthDialog.qml

@@ -34,5 +34,5 @@ sed -i '/"light":/c\"light": "Sakura Light",' ~/.config/zed/settings.json
 cp /tmp/Xresources_switcher ~/.Xresources
 
 # Background
-feh --bg-fill ~/wallpapers/sakura.png
+feh --bg-fill ~/wallpapers/melange-new.jpg
 

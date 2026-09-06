@@ -1,0 +1,13 @@
+//@ pragma UseQApplication
+import Quickshell
+
+ShellRoot {
+    Variants {
+        model: Quickshell.screens
+        Bar {}
+    }
+    Variants {
+        model: Quickshell.screens
+        Osd {}
+    }
+}

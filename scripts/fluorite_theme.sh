@@ -24,7 +24,7 @@ $HOME/tools/suckless_tools/scripts/themes/$SELECTED.sh
 # cp ~/.config/polybar/$SELECTED.ini ~/.config/polybar/theme.ini
 
 # Reload dunst (NEEDS a fix)
-~/tools/suckless_tools/scripts/dunst_xrdb.sh
+# ~/tools/suckless_tools/scripts/dunst_xrdb.sh
 
 # Reload St and nvim
 pidof nvim | xargs kill -s USR1
@@ -32,6 +32,6 @@ pidof hx | xargs kill -s USR1
 pidof tabbed | xargs kill -s USR1
 sleep 0.1
 pidof st | xargs kill -s USR1
-$HOME/tools/suckless_tools/scripts/multi_polybar.sh
+# $HOME/tools/suckless_tools/scripts/multi_polybar.sh
 
-notify-send -u low "Theme loaded"
+# notify-send -u low "Theme loaded"
