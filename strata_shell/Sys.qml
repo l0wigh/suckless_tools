@@ -89,21 +89,19 @@ Singleton {
         onTriggered: capsProc.running = true
     }
 
-    // one process per tick covers the indicators: caps lock + dunst
-    // paused + default-source mute
+    // one process per tick covers the indicators: caps lock +
+    // default-source mute + compositor status
     Process {
         id: capsProc
         command: ["sh", "-c", "xset q | awk '/Caps Lock/{print $4}'; " +
-            "dunstctl is-paused 2>/dev/null; " +
             "pactl get-source-mute @DEFAULT_SOURCE@ 2>/dev/null; " +
             "pgrep -x picom >/dev/null && echo comp || echo nocomp"]
         stdout: StdioCollector {
             onStreamFinished: {
                 const lines = text.trim().split("\n")
                 root.capsOn = lines[0] === "on"
-                root.dndOn = lines[1] === "true"
-                root.micMuted = lines[2] === "Mute: yes"
-                root.composited = lines[3] !== "nocomp"
+                root.micMuted = lines[1] === "Mute: yes"
+                root.composited = lines[2] !== "nocomp"
             }
         }
     }
@@ -124,9 +122,7 @@ Singleton {
     }
 
     function toggleDnd() {
-        Quickshell.execDetached(["dunstctl", "set-paused", "toggle"])
         dndOn = !dndOn
-        dndRefresh.restart()
     }
     function popNotification() {
         // replaying must always show something: leave DND first, and say so

@@ -5,10 +5,10 @@ BarModule {
     id: root
 
     active: popup.visible
-    badgeCount: Notifs.count
+    badgeCount: Sys.dndOn ? 0 : Notifs.count
 
-    icon: Notifs.count > 0 ? "󰂚" : "󰂞"
-    iconColor: Notifs.count > 0 ? Theme.accent : Qt.alpha(Theme.fg, 0.5)
+    icon: Sys.dndOn ? "󰂛" : (Notifs.count > 0 ? "󰂚" : "󰂞")
+    iconColor: Sys.dndOn ? Qt.alpha(Theme.fg, 0.4) : (Notifs.count > 0 ? Theme.accent : Qt.alpha(Theme.fg, 0.5))
 
     onClicked: mouse => {
         popup.toggle()

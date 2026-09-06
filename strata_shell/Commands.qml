@@ -155,7 +155,7 @@ BarModule {
 
         width: (parent.width - 6) / 2
         height: 40
-        radius: 12
+        radius: 6
         color: on ? Theme.selbg
              : pillMa.containsMouse ? Qt.alpha(Theme.fg, 0.12)
              : Qt.alpha(Theme.fg, 0.05)
@@ -212,7 +212,7 @@ BarModule {
 
         width: parent.width
         height: 34
-        radius: 8
+        radius: 6
         color: rowMa.containsMouse ? Qt.alpha(Theme.fg, 0.12) : "transparent"
 
         Behavior on color { ColorAnimation { duration: 120 } }

@@ -2,6 +2,8 @@ import QtQuick
 import Quickshell
 import Quickshell.X11
 import Quickshell.Io
+import Quickshell.Services.Notifications
+import Quickshell.Services.Mpris
 
 XPanelWindow {
     id: root
@@ -15,8 +17,8 @@ XPanelWindow {
         bottom: 80
     }
 
-    implicitWidth: 240
-    implicitHeight: 54
+    implicitWidth: 280
+    implicitHeight: 56
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
     aboveWindows: true
@@ -31,6 +33,7 @@ XPanelWindow {
     property string osdSubText: ""
     property bool hasProgressBar: true
     property color osdIconColor: Theme.accent
+    property string osdImage: ""
 
     Behavior on osdOpacity {
         NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
@@ -42,7 +45,7 @@ XPanelWindow {
         onTriggered: root.osdOpacity = 0
     }
 
-    function showOsd(icon, val, label, isMuted, subText, showBar, iconColor) {
+    function showOsd(icon, val, label, isMuted, subText, showBar, iconColor, durationMs, imageUrl) {
         root.osdIcon = icon
         root.osdValue = val ?? 0
         root.osdLabel = label
@@ -50,7 +53,9 @@ XPanelWindow {
         root.osdSubText = subText ?? ""
         root.hasProgressBar = showBar !== undefined ? showBar : true
         root.osdIconColor = iconColor ? iconColor : (root.osdMuted ? Theme.red : Theme.accent)
+        root.osdImage = imageUrl ?? ""
         root.osdOpacity = 1
+        hideTimer.interval = durationMs ?? 1800
         hideTimer.restart()
     }
 
@@ -275,6 +280,80 @@ XPanelWindow {
         }
     }
 
+    // Notifications watcher for OSD
+    Connections {
+        target: Notifs
+        function onNotificationArrived(item) {
+            if (!item || Sys.dndOn) return
+
+            const isCrit = item.urgency === NotificationUrgency.Critical
+            const icon = isCrit ? "󰵚" : "󰂚"
+            const color = isCrit ? Theme.red : Theme.accent
+
+            // Clean body: remove newlines, tags, collapse spaces
+            let bodyText = (item.body || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim()
+            if (bodyText.length > 45)
+                bodyText = bodyText.slice(0, 42) + "…"
+
+            let titleText = (item.summary || item.appName || "Notification").trim()
+            if (titleText.length > 30)
+                titleText = titleText.slice(0, 27) + "…"
+
+            root.showOsd(icon, 0, titleText, isCrit, bodyText, false, color, 3500)
+        }
+    }
+
+    // Media track change watcher for OSD
+    readonly property var activePlayer: {
+        const ps = Mpris.players.values
+        for (let i = 0; i < ps.length; i++)
+            if (ps[i].playbackState === MprisPlaybackState.Playing)
+                return ps[i]
+        return null
+    }
+
+    property string _lastTrackKey: ""
+    property bool _mediaInitDone: false
+
+    Connections {
+        target: root.activePlayer
+        function onTrackTitleChanged() {
+            root.checkTrackChange()
+        }
+        function onPlaybackStateChanged() {
+            root.checkTrackChange()
+        }
+    }
+
+    onActivePlayerChanged: checkTrackChange()
+
+    function checkTrackChange() {
+        const p = root.activePlayer
+        if (!p || p.playbackState !== MprisPlaybackState.Playing) return
+        const title = (p.trackTitle || "").trim()
+        if (!title) return
+
+        let artist = ""
+        if (p.trackArtists && p.trackArtists.length > 0)
+            artist = Array.isArray(p.trackArtists) ? p.trackArtists.join(", ") : String(p.trackArtists)
+        else if (p.trackAlbum)
+            artist = p.trackAlbum
+
+        const key = title + " - " + artist
+
+        if (!root._mediaInitDone) {
+            root._lastTrackKey = key
+            root._mediaInitDone = true
+            return
+        }
+
+        if (key !== root._lastTrackKey) {
+            root._lastTrackKey = key
+            const art = p.trackArtUrl || ""
+            root.showOsd("󰝚", 0, title, false, artist, false, Theme.magenta, 3500, art)
+        }
+    }
+
     Component.onCompleted: {
         volProc.running = true
         briProc.running = true
@@ -284,7 +363,7 @@ XPanelWindow {
     // OSD Card
     Rectangle {
         anchors.fill: parent
-        radius: 14
+        radius: 6
         color: Theme.bg
         border.width: 0
 
@@ -294,17 +373,40 @@ XPanelWindow {
             spacing: 12
             anchors.verticalCenter: parent.verticalCenter
 
-            Text {
-                text: root.osdIcon
-                color: root.osdIconColor
-                font.family: Theme.iconFontFamily
-                font.pixelSize: 20
+            Item {
+                width: 32
+                height: 32
                 anchors.verticalCenter: parent.verticalCenter
+
+                Text {
+                    anchors.centerIn: parent
+                    visible: root.osdImage === "" || artImage.status !== Image.Ready
+                    text: root.osdIcon
+                    color: root.osdIconColor
+                    font.family: Theme.iconFontFamily
+                    font.pixelSize: 20
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 4
+                    clip: true
+                    color: Qt.alpha(Theme.fg, 0.08)
+                    visible: root.osdImage !== "" && artImage.status === Image.Ready
+
+                    Image {
+                        id: artImage
+                        anchors.fill: parent
+                        source: root.osdImage
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                    }
+                }
             }
 
             Column {
                 anchors.verticalCenter: parent.verticalCenter
-                width: parent.width - 36
+                width: parent.width - 44
                 spacing: root.hasProgressBar ? 6 : 4
 
                 Item {
@@ -313,11 +415,14 @@ XPanelWindow {
 
                     Text {
                         anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.rightMargin: root.hasProgressBar ? 35 : 0
                         text: root.osdLabel
                         color: Theme.fg
                         font.family: Theme.fontFamily
                         font.pixelSize: 11
                         font.bold: true
+                        elide: Text.ElideRight
                     }
 
                     Text {
