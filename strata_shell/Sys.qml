@@ -106,6 +106,7 @@ Singleton {
     property bool capsOn: false
     property bool dndOn: false
     property bool micMuted: false
+    property bool composited: true
     property double suppressVolumeUntil: 0
     property double suppressBrightnessUntil: 0
 

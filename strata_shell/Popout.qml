@@ -41,14 +41,13 @@ PopupWindow {
     readonly property bool isAtBottom: card.isAtBottom
 
     anchor.item: anchorItem
-    // catcher mode: stretch the window over the screen from the bar edge (x: 54)
-    // so the bar itself is never obstructed by the catcher
-    anchor.rect.x: catcher ? (anchorItem ? 54 - anchorItem.mapToGlobal(0, 0).x : 54)
+    // catcher mode: stretch the window over the screen from the bar edge (Config.leftBarWidth)
+    anchor.rect.x: catcher ? (anchorItem ? Config.leftBarWidth - anchorItem.mapToGlobal(0, 0).x : Config.leftBarWidth)
                            : (anchorItem?.width ?? 0) + 12
     anchor.rect.y: catcher ? (anchorItem ? -anchorItem.mapToGlobal(0, 0).y : 0)
                            : 0
     implicitWidth: catcher
-        ? (Quickshell.screens.length ? Quickshell.screens[0].width - 54 : 1920 - 54)
+        ? (Quickshell.screens.length ? Quickshell.screens[0].width - Config.leftBarWidth : 1920 - Config.leftBarWidth)
         : cardWidth
     implicitHeight: catcher
         ? (Quickshell.screens.length ? Quickshell.screens[0].height : 1080)
@@ -174,7 +173,10 @@ PopupWindow {
             y: !root.catcher ? 0
              : Math.max(minY, Math.min(maxY, root.ay + (root.anchorItem?.height ?? 0) / 2 - height / 2))
 
-            transform: Translate { id: slide; x: 0 }
+            transform: Translate {
+                id: slide
+                x: 0
+            }
 
             readonly property alias enterAnim: enterAnim
             readonly property alias exitAnim: exitAnim
