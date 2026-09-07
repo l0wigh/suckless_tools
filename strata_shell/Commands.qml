@@ -82,6 +82,7 @@ BarModule {
 
     FileView {
         path: Theme.configDir + "/pomodoro"
+        printErrors: false
         watchChanges: true
         onFileChanged: reload()
         onLoaded: {
@@ -338,8 +339,6 @@ BarModule {
 
             Repeater {
                 model: [
-                    { icon: "󰑓", label: "Restart bar",
-                      run: () => Quickshell.execDetached([Theme.configDir + "/scripts/bar", "restart"]) },
                     { icon: "󰐥", label: "Power menu", color: Theme.red, keepOpen: true,
                       run: () => { menu.powerView = true } }
                 ]
@@ -354,52 +353,6 @@ BarModule {
             anchors.left: parent.left
             anchors.right: parent.right
             spacing: 6
-
-            // Header back button
-            Rectangle {
-                width: parent.width
-                height: 32
-                radius: 6
-                color: backMa.containsMouse ? Qt.alpha(Theme.fg, 0.1) : "transparent"
-
-                Row {
-                    anchors.left: parent.left
-                    anchors.leftMargin: 8
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "󰅁"
-                        color: Theme.accent
-                        font.family: Theme.iconFontFamily
-                        font.pixelSize: 16
-                    }
-
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "Alimentation"
-                        color: Theme.fg
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.cardTitleSize
-                        font.bold: true
-                    }
-                }
-
-                MouseArea {
-                    id: backMa
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: menu.powerView = false
-                }
-            }
-
-            Rectangle {
-                width: parent.width - 8
-                anchors.horizontalCenter: parent.horizontalCenter
-                height: 1
-                color: Qt.alpha(Theme.fg, 0.15)
-            }
 
             Repeater {
                 model: [

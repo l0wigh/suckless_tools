@@ -19,10 +19,19 @@ Popout {
         if (visible) {
             statusMsg = ""
             refresh(true)
+        } else {
+            refreshTimer.stop()
+            scanProc.running = false
+            statusProc.running = false
+            radioProc.running = false
+            savedProc.running = false
+            actProc.running = false
+            scanning = false
         }
     }
 
     function refresh(rescan) {
+        if (!visible) return
         scanning = true
         statusMsg = rescan ? "Scanning networks…" : ""
         statusProc.running = true
@@ -78,6 +87,7 @@ Popout {
     Process {
         id: actProc
         onExited: (code, st) => {
+            if (!root.visible) return
             root.statusMsg = code === 0 ? "Ready" : "Action failed"
             refreshTimer.restart()
         }
@@ -86,14 +96,18 @@ Popout {
     Timer {
         id: refreshTimer
         interval: 1500
-        onTriggered: root.refresh(false)
+        onTriggered: {
+            if (root.visible) root.refresh(false)
+        }
     }
 
     Process {
         id: statusProc
         command: ["sh", "-c", "wpa_cli status 2>/dev/null | awk -F= '/^ssid=/{print $2}'"]
         stdout: SplitParser {
-            onRead: line => root.activeSsid = line.trim()
+            onRead: line => {
+                if (root.visible) root.activeSsid = line.trim()
+            }
         }
     }
 
@@ -101,7 +115,9 @@ Popout {
         id: radioProc
         command: ["sh", "-c", "rfkill list wifi 2>/dev/null | grep -q 'Soft blocked: yes' && echo 'disabled' || echo 'enabled'"]
         stdout: SplitParser {
-            onRead: line => root.wifiOn = (line.trim() === "enabled")
+            onRead: line => {
+                if (root.visible) root.wifiOn = (line.trim() === "enabled")
+            }
         }
     }
 
@@ -111,11 +127,13 @@ Popout {
         command: ["sh", "-c", "wpa_cli list_networks 2>/dev/null | awk -F'\\t' 'NF>=2 && $1 ~ /^[0-9]+$/ {print $2}'"]
         stdout: SplitParser {
             onRead: line => {
+                if (!root.visible) return
                 const n = line.trim()
                 if (n !== "") root._savedList.push(n)
             }
         }
         onRunningChanged: {
+            if (!root.visible) return
             if (running) root._savedList = []
             else root.savedWifi = root._savedList
         }
@@ -126,6 +144,7 @@ Popout {
         id: scanProc
         stdout: SplitParser {
             onRead: line => {
+                if (!root.visible) return
                 const p = line.split(":")
                 if (p.length < 4) return
                 const ssid = p.slice(3).join(":").replace(/\\:/g, ":")
@@ -136,6 +155,7 @@ Popout {
             }
         }
         onRunningChanged: {
+            if (!root.visible) return
             if (running) {
                 root._scanned = []
             } else {

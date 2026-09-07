@@ -151,6 +151,7 @@ Singleton {
 
     FileView {
         path: root.configDir + "/bar-height"
+        printErrors: false
         watchChanges: true
         onFileChanged: reload()
         onLoadFailed: root._barStateLoads++
@@ -164,6 +165,7 @@ Singleton {
 
     FileView {
         path: root.configDir + "/bar-scale"
+        printErrors: false
         watchChanges: true
         onFileChanged: reload()
         onLoadFailed: root._barStateLoads++

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Shapes
 import Quickshell
 import Quickshell.X11
 import Quickshell.Io
@@ -11,23 +12,19 @@ XPanelWindow {
     screen: modelData
 
     anchors {
-        bottom: true
+        top: true
     }
     margins {
-        bottom: 80
+        top: Config.enableFrameBars ? Config.topBarHeight : 0
     }
 
-    implicitWidth: 280
-    implicitHeight: 56
+    implicitWidth: 272
+    implicitHeight: root.hasProgressBar ? 82 : 62
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
     aboveWindows: true
     focusable: false
-    visible: osdOpacity > 0
-
-    property real osdOpacity: 0
-    property string osdIcon: "󰕾"
-    property int osdValue: 0
+    property bool osdVisible: false
     property bool osdMuted: false
     property string osdLabel: "Volume"
     property string osdSubText: ""
@@ -35,14 +32,10 @@ XPanelWindow {
     property color osdIconColor: Theme.accent
     property string osdImage: ""
 
-    Behavior on osdOpacity {
-        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
-    }
-
     Timer {
         id: hideTimer
         interval: 1800
-        onTriggered: root.osdOpacity = 0
+        onTriggered: root.osdVisible = false
     }
 
     function showOsd(icon, val, label, isMuted, subText, showBar, iconColor, durationMs, imageUrl) {
@@ -54,7 +47,7 @@ XPanelWindow {
         root.hasProgressBar = showBar !== undefined ? showBar : true
         root.osdIconColor = iconColor ? iconColor : (root.osdMuted ? Theme.red : Theme.accent)
         root.osdImage = imageUrl ?? ""
-        root.osdOpacity = 1
+        root.osdVisible = true
         hideTimer.interval = durationMs ?? 1800
         hideTimer.restart()
     }
@@ -76,8 +69,10 @@ XPanelWindow {
                     if (m) {
                         const v = parseInt(m[1])
                         if (root._initDone && (v !== root._lastVol || isMuted !== root._lastMuted)) {
-                            const icon = isMuted ? "󰝟" : v < 25 ? "󰕿" : v < 65 ? "󰖀" : "󰕾"
-                            root.showOsd(icon, v, isMuted ? "Muted" : "Volume", isMuted)
+                            if (Date.now() > Sys.suppressVolumeUntil) {
+                                const icon = isMuted ? "󰝟" : v < 25 ? "󰕿" : v < 65 ? "󰖀" : "󰕾"
+                                root.showOsd(icon, v, isMuted ? "Muted" : "Volume", isMuted)
+                            }
                         }
                         root._lastVol = v
                         root._lastMuted = isMuted
@@ -236,6 +231,7 @@ XPanelWindow {
     property bool _batInitDone: false
     property bool _batLowWarned: false
     property bool _batHighWarned: false
+    property bool _lastCharging: false
 
     Connections {
         target: Sys
@@ -253,11 +249,21 @@ XPanelWindow {
         if (!root._batInitDone) {
             root._batLowWarned = Sys.battery <= 30
             root._batHighWarned = Sys.battery >= 80
+            root._lastCharging = Sys.batteryCharging
             root._batInitDone = true
             return
         }
 
         const pct = Math.round(Sys.battery)
+
+        // Affichage OSD au changement d'état du secteur (branché / débranché)
+        if (Sys.batteryCharging !== root._lastCharging) {
+            root._lastCharging = Sys.batteryCharging
+            const icon = Sys.batteryIcon
+            const label = Sys.batteryCharging ? "Charging" : "Discharging"
+            const color = Sys.batteryCharging ? Theme.green : Theme.accent
+            root.showOsd(icon, pct, label, false, "", true, color)
+        }
 
         // Low battery alert (discharging <= 30%)
         if (!Sys.batteryCharging && pct <= 30) {
@@ -360,109 +366,189 @@ XPanelWindow {
         wifiProc.running = true
     }
 
-    // OSD Card
+    property string osdIcon: "󰕾"
+    property int osdValue: 0
+    readonly property int targetHeight: root.hasProgressBar ? 82 : 62
+
+    visible: slide.y > -root.targetHeight
+
+    // OSD Card (styled as top bar popout flush with concave fillets)
     Rectangle {
-        anchors.fill: parent
-        radius: 6
+        id: card
+        width: 260
+        height: root.targetHeight
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        topLeftRadius: 0
+        topRightRadius: 0
+        bottomLeftRadius: Config.popoutCornerRadius
+        bottomRightRadius: Config.popoutCornerRadius
         color: Theme.bg
         border.width: 0
 
-        Row {
+        transform: Translate {
+            id: slide
+            y: root.osdVisible ? 0 : -root.targetHeight
+
+            Behavior on y {
+                NumberAnimation {
+                    duration: Config.animDuration
+                    easing.type: root.osdVisible ? Easing.OutCubic : Easing.InCubic
+                }
+            }
+        }
+
+        // Top-left concave fillet (joins TopBar smoothly)
+        Shape {
+            visible: Config.enableFrameBars
+            anchors.right: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: -1
+            width: Config.popoutCornerRadius
+            height: Config.popoutCornerRadius
+            preferredRendererType: Shape.CurveRenderer
+            ShapePath {
+                fillColor: Theme.bg
+                strokeColor: "transparent"
+                startX: 0
+                startY: 0
+                PathLine { x: Config.popoutCornerRadius; y: 0 }
+                PathLine { x: Config.popoutCornerRadius; y: Config.popoutCornerRadius }
+                PathArc {
+                    x: 0
+                    y: 0
+                    radiusX: Config.popoutCornerRadius
+                    radiusY: Config.popoutCornerRadius
+                    direction: PathArc.Counterclockwise
+                }
+            }
+        }
+
+        // Top-right concave fillet (joins TopBar smoothly)
+        Shape {
+            visible: Config.enableFrameBars
+            anchors.left: parent.right
+            anchors.top: parent.top
+            anchors.topMargin: -1
+            width: Config.popoutCornerRadius
+            height: Config.popoutCornerRadius
+            preferredRendererType: Shape.CurveRenderer
+            ShapePath {
+                fillColor: Theme.bg
+                strokeColor: "transparent"
+                startX: Config.popoutCornerRadius
+                startY: 0
+                PathLine { x: 0; y: 0 }
+                PathLine { x: 0; y: Config.popoutCornerRadius }
+                PathArc {
+                    x: Config.popoutCornerRadius
+                    y: 0
+                    radiusX: Config.popoutCornerRadius
+                    radiusY: Config.popoutCornerRadius
+                    direction: PathArc.Clockwise
+                }
+            }
+        }
+
+        Column {
             anchors.fill: parent
-            anchors.margins: 12
-            spacing: 12
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.margins: 10
+            spacing: 8
 
+            // Top row: icon/art + title + percentage
             Item {
-                width: 32
-                height: 32
-                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width
+                height: 24
 
-                Text {
-                    anchors.centerIn: parent
-                    visible: root.osdImage === "" || artImage.status !== Image.Ready
-                    text: root.osdIcon
-                    color: root.osdIconColor
-                    font.family: Theme.iconFontFamily
-                    font.pixelSize: 20
+                Item {
+                    id: iconBox
+                    width: 24
+                    height: 24
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Text {
+                        anchors.centerIn: parent
+                        visible: root.osdImage === "" || artImage.status !== Image.Ready
+                        text: root.osdIcon
+                        color: root.osdIconColor
+                        font.family: Theme.iconFontFamily
+                        font.pixelSize: Theme.cardIconSize + 1
+                    }
+
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 4
+                        clip: true
+                        color: Qt.alpha(Theme.fg, 0.08)
+                        visible: root.osdImage !== "" && artImage.status === Image.Ready
+
+                        Image {
+                            id: artImage
+                            anchors.fill: parent
+                            source: root.osdImage
+                            fillMode: Image.PreserveAspectCrop
+                            asynchronous: true
+                        }
+                    }
                 }
 
-                Rectangle {
-                    anchors.fill: parent
-                    radius: 4
-                    clip: true
-                    color: Qt.alpha(Theme.fg, 0.08)
-                    visible: root.osdImage !== "" && artImage.status === Image.Ready
+                Text {
+                    id: pctText
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: root.hasProgressBar
+                    text: root.osdMuted ? "0%" : root.osdValue + "%"
+                    color: root.osdIconColor
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.cardTextSize + 1
+                    font.bold: true
+                }
 
-                    Image {
-                        id: artImage
-                        anchors.fill: parent
-                        source: root.osdImage
-                        fillMode: Image.PreserveAspectCrop
-                        asynchronous: true
-                    }
+                Text {
+                    anchors.left: iconBox.right
+                    anchors.leftMargin: 8
+                    anchors.right: pctText.visible ? pctText.left : parent.right
+                    anchors.rightMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: root.osdLabel
+                    color: Theme.fg
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.cardTitleSize
+                    font.bold: true
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
                 }
             }
 
-            Column {
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width - 44
-                spacing: root.hasProgressBar ? 6 : 4
-
-                Item {
-                    width: parent.width
-                    height: 14
-
-                    Text {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.rightMargin: root.hasProgressBar ? 35 : 0
-                        text: root.osdLabel
-                        color: Theme.fg
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 11
-                        font.bold: true
-                        elide: Text.ElideRight
-                    }
-
-                    Text {
-                        anchors.right: parent.right
-                        visible: root.hasProgressBar
-                        text: root.osdMuted ? "0%" : root.osdValue + "%"
-                        color: root.osdIconColor
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 11
-                        font.bold: true
-                    }
-                }
+            // Progress bar (10px height, radius 5px matching Popout)
+            Rectangle {
+                visible: root.hasProgressBar
+                width: parent.width
+                height: 10
+                radius: 5
+                color: Qt.alpha(Theme.fg, 0.12)
 
                 Rectangle {
-                    visible: root.hasProgressBar
-                    width: parent.width
-                    height: 6
-                    radius: 3
-                    color: Qt.alpha(Theme.fg, 0.15)
-
-                    Rectangle {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        width: parent.width * Math.min(1, Math.max(0, root.osdMuted ? 0 : root.osdValue / 100))
-                        radius: 3
-                        color: root.osdIconColor
-                        Behavior on width { NumberAnimation { duration: 100 } }
-                    }
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: parent.width * Math.min(1, Math.max(0, root.osdMuted ? 0 : root.osdValue / 100))
+                    radius: 5
+                    color: root.osdIconColor
+                    Behavior on width { NumberAnimation { duration: Config.animDuration } }
                 }
+            }
 
-                Text {
-                    visible: !root.hasProgressBar
-                    width: parent.width
-                    text: root.osdSubText
-                    color: Theme.disabled
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 11
-                    elide: Text.ElideRight
-                }
+            // Status text / Subtext
+            Text {
+                visible: root.osdSubText !== "" || !root.hasProgressBar
+                width: parent.width
+                text: root.osdSubText !== "" ? root.osdSubText : (root.osdMuted ? "Muted" : "")
+                color: Qt.alpha(Theme.fg, 0.6)
+                font.family: Theme.fontFamily
+                font.pixelSize: 11
+                elide: Text.ElideRight
             }
         }
     }

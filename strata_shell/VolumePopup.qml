@@ -5,8 +5,8 @@ import Quickshell.Io
 Popout {
     id: root
 
-    cardWidth: 280
-    cardHeight: 100
+    cardWidth: 72
+    cardHeight: 200
 
     property int volume: 0
     property bool muted: false
@@ -54,12 +54,14 @@ Popout {
     }
 
     function setVolume(pct) {
+        Sys.suppressVolumeOSD(1500)
         pct = Math.max(0, Math.min(100, Math.round(pct)))
         root.volume = pct
         Quickshell.execDetached(["pactl", "set-sink-volume", "@DEFAULT_SINK@", pct + "%"])
     }
 
     function toggleMute() {
+        Sys.suppressVolumeOSD(1500)
         Quickshell.execDetached(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle"])
         refreshTimer.restart()
     }
@@ -68,113 +70,59 @@ Popout {
         anchors.fill: parent
         spacing: 12
 
-        // Top row
-        Item {
-            width: parent.width
-            height: 24
-
-            Row {
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 8
-
-                // Mute button
-                Text {
-                    text: root.muted ? "󰝟" : root.volume < 25 ? "󰕿" : root.volume < 65 ? "󰖀" : "󰕾"
-                    color: root.muted ? Theme.red : Theme.accent
-                    font.family: Theme.iconFontFamily
-                    font.pixelSize: Theme.cardIconSize + 1
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    MouseArea {
-                        anchors.fill: parent
-                        anchors.margins: -4
-                        onClicked: root.toggleMute()
-                    }
-                }
-
-                Text {
-                    text: "Volume"
-                    color: Theme.fg
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.cardTitleSize
-                    font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
-
-            Row {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 10
-
-                Text {
-                    text: root.muted ? "Muted" : root.volume + "%"
-                    color: root.muted ? Theme.disabled : Theme.accent
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.cardTextSize + 1
-                    font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
-                    text: "󰒓"
-                    color: Theme.secondary
-                    font.family: Theme.iconFontFamily
-                    font.pixelSize: Theme.cardIconSize
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    MouseArea {
-                        anchors.fill: parent
-                        anchors.margins: -4
-                        onClicked: Quickshell.execDetached(["pavucontrol"])
-                    }
-                }
-            }
+        Text {
+            text: root.muted ? "Muted" : root.volume + "%"
+            color: root.muted ? Theme.red : Theme.accent
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.cardTextSize + 1
+            font.bold: true
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        // Slider track
-        Rectangle {
-            id: track
+        Item {
             width: parent.width
-            height: 12
-            radius: 6
-            color: Qt.alpha(Theme.fg, 0.12)
+            height: parent.height - 36
 
+            // Sleek OSD-style Vertical Slider Track (10px thickness)
             Rectangle {
-                anchors.left: parent.left
+                id: track
+                width: 10
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                width: Math.min(parent.width, Math.max(0, parent.width * (root.volume / 100)))
-                radius: 6
-                color: root.muted ? Qt.alpha(Theme.fg, 0.3) : Theme.accent
-                Behavior on color { ColorAnimation { duration: 150 } }
-            }
+                radius: 5
+                color: Qt.alpha(Theme.fg, 0.12)
+                anchors.horizontalCenter: parent.horizontalCenter
 
-            // Grabber handle
-            Rectangle {
-                x: Math.min(track.width - width, Math.max(0, (track.width * (root.volume / 100)) - width / 2))
-                anchors.verticalCenter: parent.verticalCenter
-                width: 16
-                height: 16
-                radius: 8
-                color: Theme.fg
-                border.width: 2
-                border.color: Theme.bg
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                anchors.margins: -6
-
-                function updateFromMouse(mouse) {
-                    const frac = Math.max(0, Math.min(1, mouse.x / track.width))
-                    root.setVolume(frac * 100)
+                Rectangle {
+                    id: fillBar
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    height: Math.min(parent.height, Math.max(0, parent.height * (root.volume / 100)))
+                    radius: 5
+                    color: root.muted ? Qt.alpha(Theme.fg, 0.3) : Theme.accent
+                    Behavior on height {
+                        enabled: !dragArea.pressed
+                        NumberAnimation { duration: 100; easing.type: Easing.OutCubic }
+                    }
+                    Behavior on color { ColorAnimation { duration: 150 } }
                 }
 
-                onPressed: mouse => updateFromMouse(mouse)
-                onPositionChanged: mouse => {
-                    if (pressed) updateFromMouse(mouse)
+                MouseArea {
+                    id: dragArea
+                    anchors.fill: parent
+                    anchors.margins: -16
+
+                    function updateFromMouse(mouse) {
+                        const localY = mapToItem(track, mouse.x, mouse.y).y
+                        const frac = Math.max(0, Math.min(1, 1 - (localY / track.height)))
+                        root.setVolume(frac * 100)
+                    }
+
+                    onPressed: mouse => updateFromMouse(mouse)
+                    onPositionChanged: mouse => {
+                        if (pressed) updateFromMouse(mouse)
+                    }
                 }
             }
         }

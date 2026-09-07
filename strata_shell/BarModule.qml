@@ -31,8 +31,8 @@ Rectangle {
 
     default property alias extraContent: row.data
 
-    implicitHeight: Math.round(34 * Theme.barScale)
-    implicitWidth: root.label !== "" ? row.implicitWidth + Math.round(14 * Theme.barScale) : implicitHeight
+    implicitHeight: root.label !== "" ? row.implicitHeight + Math.round(10 * Theme.barScale) : Math.round(34 * Theme.barScale)
+    implicitWidth: Math.round(34 * Theme.barScale)
     radius: pillRadius
     color: active ? activeColor
          : (mouse.containsMouse && interactive ? Qt.alpha(Theme.fg, 0.14) : "transparent")
@@ -44,16 +44,16 @@ Rectangle {
     Behavior on color { ColorAnimation { duration: 150 } }
     Behavior on scale { NumberAnimation { duration: 80; easing.type: Easing.OutQuad } }
 
-    Row {
+    Column {
         id: row
         anchors.centerIn: parent
         anchors.horizontalCenterOffset: root.iconOffsetX
         anchors.verticalCenterOffset: root.iconOffsetY
-        spacing: Math.round(7 * Theme.barScale)
+        spacing: Math.round(2 * Theme.barScale)
 
         Text {
             visible: root.icon !== ""
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             text: root.icon
             color: root.active ? root.activeIconColor : root.iconColor
             font.family: root.iconFont
@@ -63,11 +63,11 @@ Rectangle {
 
         Text {
             visible: root.label !== ""
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             text: root.label
             color: root.active ? root.activeIconColor : root.labelColor
             font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSize
+            font.pixelSize: Math.round(Theme.fontSize * 0.9)
             Behavior on color { ColorAnimation { duration: 250 } }
         }
     }

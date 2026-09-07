@@ -135,10 +135,10 @@ Singleton {
 
     Timer {
         id: occRefresh
-        interval: 150
+        interval: 400
         onTriggered: {
-            occProc.running = false
-            occProc.running = true
+            if (!occProc.running)
+                occProc.running = true
         }
     }
 
@@ -146,8 +146,8 @@ Singleton {
     Process {
         id: occProc
         command: ["sh", "-c",
-            "for w in $(xprop -root _NET_CLIENT_LIST 2>/dev/null | grep -oE '0x[0-9a-f]+'); do " +
-            "xprop -id $w _NET_WM_DESKTOP 2>/dev/null | sed -n 's/.*= \\([0-9]*\\).*/\\1/p'; done"]
+            "ids=$(xprop -root _NET_CLIENT_LIST 2>/dev/null | grep -oE '0x[0-9a-f]+'); " +
+            "[ -n \"$ids\" ] && xprop -id $ids _NET_WM_DESKTOP 2>/dev/null | sed -n 's/.*= \\([0-9]*\\).*/\\1/p'"]
         stdout: SplitParser {
             onRead: line => {
                 const ws = parseInt(line)

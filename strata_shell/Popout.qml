@@ -41,14 +41,14 @@ PopupWindow {
     readonly property bool isAtBottom: card.isAtBottom
 
     anchor.item: anchorItem
-    // catcher mode: stretch the window over the screen from the bar edge (x: 64)
+    // catcher mode: stretch the window over the screen from the bar edge (x: 54)
     // so the bar itself is never obstructed by the catcher
-    anchor.rect.x: catcher ? (anchorItem ? 58 - anchorItem.mapToGlobal(0, 0).x : 58)
+    anchor.rect.x: catcher ? (anchorItem ? 54 - anchorItem.mapToGlobal(0, 0).x : 54)
                            : (anchorItem?.width ?? 0) + 12
     anchor.rect.y: catcher ? (anchorItem ? -anchorItem.mapToGlobal(0, 0).y : 0)
                            : 0
     implicitWidth: catcher
-        ? (Quickshell.screens.length ? Quickshell.screens[0].width - 58 : 1920 - 58)
+        ? (Quickshell.screens.length ? Quickshell.screens[0].width - 54 : 1920 - 54)
         : cardWidth
     implicitHeight: catcher
         ? (Quickshell.screens.length ? Quickshell.screens[0].height : 1080)
@@ -165,12 +165,12 @@ PopupWindow {
             id: card
 
             readonly property real screenH: Quickshell.screens.length ? Quickshell.screens[0].height : 1200
-            readonly property real minY: 10
-            readonly property real maxY: screenH - 10 - height
+            readonly property real minY: Config.enableFrameBars ? Config.topBarHeight : 0
+            readonly property real maxY: screenH - (Config.enableFrameBars ? Config.bottomBarHeight : 0) - height
             readonly property bool isAtBottom: y >= maxY - 1
             readonly property bool isAtTop: y <= minY + 1
 
-            x: root.catcher ? 6 : 0
+            x: 0
             y: !root.catcher ? 0
              : Math.max(minY, Math.min(maxY, root.ay + (root.anchorItem?.height ?? 0) / 2 - height / 2))
 
@@ -182,52 +182,38 @@ PopupWindow {
             ParallelAnimation {
                 id: enterAnim
                 NumberAnimation {
-                    target: slide
-                    property: "x"
-                    from: -24
-                    to: 0
-                    duration: 180
-                    easing.type: Easing.OutCubic
-                }
-                NumberAnimation {
                     target: card
-                    property: "opacity"
-                    from: 0.0
-                    to: 1.0
-                    duration: 160
-                    easing.type: Easing.OutQuad
+                    property: "width"
+                    from: 0
+                    to: root.cardWidth
+                    duration: Config.animDuration
+                    easing.type: Easing.OutCubic
                 }
             }
 
             ParallelAnimation {
                 id: exitAnim
                 NumberAnimation {
-                    target: slide
-                    property: "x"
-                    to: -24
-                    duration: 140
-                    easing.type: Easing.InCubic
-                }
-                NumberAnimation {
                     target: card
-                    property: "opacity"
-                    to: 0.0
-                    duration: 130
-                    easing.type: Easing.InQuad
+                    property: "width"
+                    to: 0
+                    duration: Config.animDuration
+                    easing.type: Easing.InCubic
                 }
                 onFinished: {
                     root.visible = false
                     root.closing = false
+                    card.width = root.cardWidth
                     slide.x = 0
                     card.opacity = 1.0
                 }
             }
             width: root.cardWidth
             height: root.cardHeight
-            topLeftRadius: !root.catcher ? 6 : 0
-            bottomLeftRadius: !root.catcher ? 6 : 0
-            topRightRadius: 6
-            bottomRightRadius: 6
+            topLeftRadius: !root.catcher ? Config.popoutCornerRadius : 0
+            bottomLeftRadius: !root.catcher ? Config.popoutCornerRadius : 0
+            topRightRadius: (Config.enableFrameBars && root.catcher && card.isAtTop) ? 0 : Config.popoutCornerRadius
+            bottomRightRadius: (Config.enableFrameBars && root.catcher && card.isAtBottom) ? 0 : Config.popoutCornerRadius
             color: Theme.bg
 
             // Top concave connector to sidebar (with 1px overlap to eliminate seam)
@@ -236,22 +222,22 @@ PopupWindow {
                 anchors.bottom: parent.top
                 anchors.bottomMargin: -1
                 anchors.left: parent.left
-                width: 6
-                height: 7
+                width: Config.popoutCornerRadius
+                height: Config.popoutCornerRadius + 1
                 layer.enabled: true
                 layer.samples: 4
                 ShapePath {
                     fillColor: Theme.bg
                     strokeColor: "transparent"
-                    startX: 0; startY: 7
-                    PathLine { x: 6; y: 7 }
-                    PathLine { x: 6; y: 6 }
+                    startX: 0; startY: Config.popoutCornerRadius + 1
+                    PathLine { x: Config.popoutCornerRadius; y: Config.popoutCornerRadius + 1 }
+                    PathLine { x: Config.popoutCornerRadius; y: Config.popoutCornerRadius }
                     PathArc {
                         x: 0; y: 0
-                        radiusX: 6; radiusY: 6
+                        radiusX: Config.popoutCornerRadius; radiusY: Config.popoutCornerRadius
                         direction: PathArc.Clockwise
                     }
-                    PathLine { x: 0; y: 7 }
+                    PathLine { x: 0; y: Config.popoutCornerRadius + 1 }
                 }
             }
 
@@ -261,43 +247,73 @@ PopupWindow {
                 anchors.top: parent.bottom
                 anchors.topMargin: -1
                 anchors.left: parent.left
-                width: 6
-                height: 7
+                width: Config.popoutCornerRadius
+                height: Config.popoutCornerRadius + 1
                 layer.enabled: true
                 layer.samples: 4
                 ShapePath {
                     fillColor: Theme.bg
                     strokeColor: "transparent"
                     startX: 0; startY: 0
-                    PathLine { x: 6; y: 0 }
-                    PathLine { x: 6; y: 1 }
+                    PathLine { x: Config.popoutCornerRadius; y: 0 }
+                    PathLine { x: Config.popoutCornerRadius; y: 1 }
                     PathArc {
-                        x: 0; y: 7
-                        radiusX: 6; radiusY: 6
+                        x: 0; y: Config.popoutCornerRadius + 1
+                        radiusX: Config.popoutCornerRadius; radiusY: Config.popoutCornerRadius
                         direction: PathArc.Counterclockwise
                     }
                     PathLine { x: 0; y: 0 }
                 }
             }
 
-            // Bottom corner patch: bridges into the bar's rounded bottom-right corner
-            Rectangle {
-                visible: root.catcher && card.isAtBottom
-                anchors.right: parent.left
-                anchors.bottom: parent.bottom
-                width: 6
-                height: 6
-                color: Theme.bg
+            // Top-right inverted concave fillet (smoothly joins TopBar when at top)
+            Shape {
+                visible: Config.enableFrameBars && root.catcher && card.isAtTop
+                anchors.left: parent.right
+                anchors.top: parent.top
+                width: Config.popoutCornerRadius
+                height: Config.popoutCornerRadius
+                preferredRendererType: Shape.CurveRenderer
+                ShapePath {
+                    fillColor: Theme.bg
+                    strokeColor: "transparent"
+                    startX: Config.popoutCornerRadius
+                    startY: 0
+                    PathLine { x: 0; y: 0 }
+                    PathLine { x: 0; y: Config.popoutCornerRadius }
+                    PathArc {
+                        x: Config.popoutCornerRadius
+                        y: 0
+                        radiusX: Config.popoutCornerRadius
+                        radiusY: Config.popoutCornerRadius
+                        direction: PathArc.Clockwise
+                    }
+                }
             }
 
-            // Top corner patch: bridges into the bar's rounded top-right corner
-            Rectangle {
-                visible: root.catcher && card.isAtTop
-                anchors.right: parent.left
-                anchors.top: parent.top
-                width: 6
-                height: 6
-                color: Theme.bg
+            // Bottom-right inverted concave fillet (smoothly joins BottomBar when at bottom)
+            Shape {
+                visible: Config.enableFrameBars && root.catcher && card.isAtBottom
+                anchors.left: parent.right
+                anchors.bottom: parent.bottom
+                width: Config.popoutCornerRadius
+                height: Config.popoutCornerRadius
+                preferredRendererType: Shape.CurveRenderer
+                ShapePath {
+                    fillColor: Theme.bg
+                    strokeColor: "transparent"
+                    startX: 0
+                    startY: 0
+                    PathLine { x: 0; y: Config.popoutCornerRadius }
+                    PathLine { x: Config.popoutCornerRadius; y: Config.popoutCornerRadius }
+                    PathArc {
+                        x: 0
+                        y: 0
+                        radiusX: Config.popoutCornerRadius
+                        radiusY: Config.popoutCornerRadius
+                        direction: PathArc.Clockwise
+                    }
+                }
             }
 
             Behavior on color { ColorAnimation { duration: 250 } }

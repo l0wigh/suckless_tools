@@ -78,6 +78,7 @@ BarModule {
     }
 
     onScrolled: dir => {
+        Sys.suppressVolumeOSD(1500)
         const delta = dir > 0 ? "+2%" : "-2%"
         Quickshell.execDetached(["pactl", "set-sink-volume", "@DEFAULT_SINK@", delta])
         updateTimer.restart()

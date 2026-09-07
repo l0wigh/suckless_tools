@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Shapes
 import Quickshell
 
 PanelWindow {
@@ -13,25 +14,80 @@ PanelWindow {
         left: true
     }
     margins {
-        top: 10
-        bottom: 10
-        left: 10
+        top: 0
+        bottom: 0
+        left: 0
     }
-    implicitWidth: 54
+    implicitWidth: Config.leftBarImplicitWidth
+    exclusiveZone: Config.leftBarWidth
+    exclusionMode: ExclusionMode.Normal
+    aboveWindows: true
     color: "transparent"
-    visible: Theme.barStateReady
+    visible: true
 
-    // 6px rounded solid background without border
     Rectangle {
-        anchors.fill: parent
+        id: barBody
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: Config.leftBarWidth
         color: Theme.bg
-        radius: 6
+    }
+
+    // Top-left concave fillet (smoothly joins TopBar and Bar)
+    Shape {
+        visible: Config.enableFrameBars
+        x: Config.leftBarWidth
+        y: Config.topBarHeight
+        width: Config.cornerRadius
+        height: Config.cornerRadius
+        preferredRendererType: Shape.CurveRenderer
+        ShapePath {
+            fillColor: Theme.bg
+            strokeColor: "transparent"
+            startX: Config.cornerRadius
+            startY: 0
+            PathLine { x: 0; y: 0 }
+            PathLine { x: 0; y: Config.cornerRadius }
+            PathArc {
+                x: Config.cornerRadius
+                y: 0
+                radiusX: Config.cornerRadius
+                radiusY: Config.cornerRadius
+                direction: PathArc.Clockwise
+            }
+        }
+    }
+
+    // Bottom-left concave fillet (smoothly joins BottomBar and Bar)
+    Shape {
+        visible: Config.enableFrameBars
+        x: Config.leftBarWidth
+        y: root.height - Config.bottomBarHeight - Config.cornerRadius
+        width: Config.cornerRadius
+        height: Config.cornerRadius
+        preferredRendererType: Shape.CurveRenderer
+        ShapePath {
+            fillColor: Theme.bg
+            strokeColor: "transparent"
+            startX: 0
+            startY: 0
+            PathLine { x: 0; y: Config.cornerRadius }
+            PathLine { x: Config.cornerRadius; y: Config.cornerRadius }
+            PathArc {
+                x: 0
+                y: 0
+                radiusX: Config.cornerRadius
+                radiusY: Config.cornerRadius
+                direction: PathArc.Clockwise
+            }
+        }
     }
 
     Item {
-        anchors.fill: parent
-        anchors.topMargin: 12
-        anchors.bottomMargin: 12
+        anchors.fill: barBody
+        anchors.topMargin: Config.enableFrameBars ? Math.max(12, Config.topBarHeight) : 12
+        anchors.bottomMargin: Config.enableFrameBars ? Math.max(12, Config.bottomBarHeight) : 12
         anchors.leftMargin: 6
         anchors.rightMargin: 7
 

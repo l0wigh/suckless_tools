@@ -24,6 +24,34 @@ Singleton {
                                     : "󰤭"
     readonly property bool online: netName !== ""
 
+    readonly property string batteryIcon: {
+        const b = battery
+        if (batteryCharging) {
+            if (b >= 95) return "󰂅"
+            if (b >= 85) return "󰂋"
+            if (b >= 75) return "󰂊"
+            if (b >= 65) return "󰢞"
+            if (b >= 55) return "󰂉"
+            if (b >= 45) return "󰢝"
+            if (b >= 35) return "󰂈"
+            if (b >= 25) return "󰂇"
+            if (b >= 15) return "󰂆"
+            if (b >= 10) return "󰢜"
+            return "󰢟"
+        } else {
+            if (b >= 95) return "󰁹"
+            if (b >= 85) return "󰂂"
+            if (b >= 75) return "󰂁"
+            if (b >= 65) return "󰂀"
+            if (b >= 55) return "󰁿"
+            if (b >= 45) return "󰁾"
+            if (b >= 35) return "󰁽"
+            if (b >= 25) return "󰁼"
+            if (b >= 15) return "󰁻"
+            return "󰁺"
+        }
+    }
+
     property var _prev: ({ idle: 0, total: 0 })
 
     Timer {
@@ -78,9 +106,12 @@ Singleton {
     property bool capsOn: false
     property bool dndOn: false
     property bool micMuted: false
-    // popups need a compositor for their transparent fullscreen catcher;
-    // Popout degrades to card-only windows when picom isn't running
     property bool composited: true
+    property double suppressVolumeUntil: 0
+
+    function suppressVolumeOSD(ms) {
+        suppressVolumeUntil = Date.now() + (ms || 1500)
+    }
 
     Timer {
         interval: 1000

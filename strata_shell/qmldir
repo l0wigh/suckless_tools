@@ -1,3 +1,4 @@
+singleton Config Config.qml
 singleton Theme Theme.qml
 singleton Wm Wm.qml
 singleton Sys Sys.qml
@@ -30,3 +31,6 @@ VolumePopup VolumePopup.qml
 ScratchpadPopup ScratchpadPopup.qml
 Osd Osd.qml
 WifiAuthDialog WifiAuthDialog.qml
+TopBar TopBar.qml
+BottomBar BottomBar.qml
+RightBar RightBar.qml
