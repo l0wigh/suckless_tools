@@ -135,7 +135,7 @@ Singleton {
 
     Timer {
         id: occRefresh
-        interval: 400
+        interval: 50
         onTriggered: {
             if (!occProc.running)
                 occProc.running = true
@@ -147,11 +147,11 @@ Singleton {
         id: occProc
         command: ["sh", "-c",
             "ids=$(xprop -root _NET_CLIENT_LIST 2>/dev/null | grep -oE '0x[0-9a-f]+'); " +
-            "[ -n \"$ids\" ] && xprop -id $ids _NET_WM_DESKTOP 2>/dev/null | sed -n 's/.*= \\([0-9]*\\).*/\\1/p'"]
+            "for id in $ids; do xprop -id $id _NET_WM_DESKTOP 2>/dev/null; done | sed -n 's/.*= \\([0-9]*\\).*/\\1/p'"]
         stdout: SplitParser {
             onRead: line => {
                 const ws = parseInt(line)
-                if (!isNaN(ws) && ws >= 0 && ws < 32)
+                if (!isNaN(ws) && ws >= 0 && ws < root.tagCount)
                     root._occ |= (1 << ws)
             }
         }
@@ -178,6 +178,7 @@ Singleton {
                     else
                         root.title = ""
                 }
+                occRefresh.restart()
             }
         }
     }
