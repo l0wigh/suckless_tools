@@ -49,9 +49,9 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 7
-        height: 4
-        radius: 2
+        anchors.bottomMargin: 2
+        height: 10
+        radius: 5
         color: Qt.alpha(Theme.fg, 0.12)
 
         Rectangle {
@@ -61,18 +61,11 @@ Item {
             height: parent.height
             radius: parent.radius
             color: Theme.accent
-        }
-        Rectangle {
-            readonly property real frac: Math.min(Math.max(
-                (ts.shown - ts.from) / (ts.to - ts.from), 0), 1)
-            x: frac * parent.width - width / 2
-            anchors.verticalCenter: parent.verticalCenter
-            width: 12
-            height: 12
-            radius: 6
-            color: Theme.fg
-            border.width: 2
-            border.color: Theme.bg
+
+            Behavior on width {
+                enabled: !ma.pressed
+                NumberAnimation { duration: 100; easing.type: Easing.OutCubic }
+            }
         }
     }
 
@@ -88,7 +81,8 @@ Item {
         anchors.fill: parent
         anchors.topMargin: 12
         function at(mx) {
-            const f = Math.min(Math.max(mx / width, 0), 1)
+            const localX = mapToItem(track, mx, 0).x
+            const f = Math.min(Math.max(localX / track.width, 0), 1)
             return ts.from + f * (ts.to - ts.from)
         }
         onPressed: m => { ts.drag = at(m.x); applyThrottle.restart() }

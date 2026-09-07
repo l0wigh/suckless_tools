@@ -118,7 +118,7 @@ XPanelWindow {
                     const m = parts[3].match(/(\d+)%/)
                     if (m) {
                         const v = parseInt(m[1])
-                        if (root._briInitDone && v !== root._lastBri) {
+                        if (root._briInitDone && v !== root._lastBri && Date.now() > Sys.suppressBrightnessUntil) {
                             const icon = v < 30 ? "󰃞" : v < 70 ? "󰃟" : "󰃠"
                             root.showOsd(icon, v, "Brightness", false)
                         }

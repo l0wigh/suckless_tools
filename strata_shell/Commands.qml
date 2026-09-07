@@ -323,11 +323,15 @@ BarModule {
                 value: root.brightness
                 suffix: "%"
                 applyFn: v => {
+                    Sys.suppressBrightnessOSD(1500)
                     root.brightness = v
                     Quickshell.execDetached(
                         ["brightnessctl", "-c", "backlight", "set", v + "%"])
                 }
-                persistFn: v => { root.brightness = v }
+                persistFn: v => {
+                    Sys.suppressBrightnessOSD(1500)
+                    root.brightness = v
+                }
             }
 
             Rectangle {
