@@ -20,6 +20,7 @@ Singleton {
     property int tagCount: 12
     property string title: ""
     property string activeWinId: ""
+    property bool activeWindowFullscreen: false
 
     // Fluorite layouts (matching polybar squared/top.ini hook-0..4)
     readonly property var layouts: [
@@ -173,10 +174,14 @@ Singleton {
                 if (id !== root.activeWinId) {
                     root.activeWinId = id
                     titleSpy.running = false
-                    if (id !== "")
+                    stateSpy.running = false
+                    if (id !== "") {
                         titleSpy.running = true
-                    else
+                        stateSpy.running = true
+                    } else {
                         root.title = ""
+                        root.activeWindowFullscreen = false
+                    }
                 }
                 occRefresh.restart()
             }
@@ -191,6 +196,16 @@ Singleton {
                 const m = line.match(/= "([\s\S]*)"$/)
                 if (m)
                     root.title = m[1].replace(/\\"/g, '"').replace(/\\\\/g, "\\")
+            }
+        }
+    }
+
+    Process {
+        id: stateSpy
+        command: ["xprop", "-spy", "-id", root.activeWinId, "_NET_WM_STATE"]
+        stdout: SplitParser {
+            onRead: line => {
+                root.activeWindowFullscreen = line.indexOf("_NET_WM_STATE_FULLSCREEN") !== -1
             }
         }
     }

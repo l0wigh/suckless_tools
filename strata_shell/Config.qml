@@ -8,10 +8,11 @@ Singleton {
     // ==========================================
     // Bar Geometry & Dimensions
     // ==========================================
+	property int frameBarSize: 20
     property int leftBarWidth: 54
-    property int topBarHeight: 12
-    property int bottomBarHeight: 12
-    property int rightBarWidth: 12
+    property int topBarHeight: frameBarSize
+    property int bottomBarHeight: frameBarSize
+    property int rightBarWidth: frameBarSize
     property int cornerRadius: 6
     readonly property int leftBarImplicitWidth: leftBarWidth + cornerRadius
     readonly property int rightBarImplicitWidth: rightBarWidth + cornerRadius
@@ -27,8 +28,8 @@ Singleton {
     readonly property bool enableRightBar: enableFrameBars
 
     property int topBarDelay: 100
-    property int bottomBarDelay: 150
-    property int rightBarDelay: 200
+    property int bottomBarDelay: 200
+    property int rightBarDelay: 300
 
     // ==========================================
     // Popout Settings

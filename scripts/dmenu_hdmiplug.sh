@@ -31,15 +31,15 @@ OPT=$(printf "%s" "${FINAL_OPTIONS}" | dmenu -c -l 10 -p "HDMI-A-0: ") || exit 0
 if [ "$OPT" = "unplug" ]; then
 	xrandr --output HDMI-A-0 --off
 	~/.fehbg
-	sleep 3
-	~/tools/suckless_tools/scripts/multi_polybar.sh
-	notify-send -u low "Deactivate HDMI-A-0"
+	# sleep 3
+	# ~/tools/suckless_tools/scripts/multi_polybar.sh
+	# notify-send -u low "Deactivate HDMI-A-0"
 else
 	SELECTED_RESOLUTION=$(echo "$OPT" | awk '{print $1}')
 	SELECTED_RATE=$(echo "$OPT" | awk '{print $2}')
 	xrandr --output HDMI-A-0 --mode "${SELECTED_RESOLUTION}" --rate "${SELECTED_RATE}" --above eDP
 	~/.fehbg
-	sleep 3
-	~/tools/suckless_tools/scripts/multi_polybar.sh
-	notify-send -u low "Activate HDMI-A-0 with ${SELECTED_RESOLUTION} @ ${SELECTED_RATE}Hz"
+	# sleep 3
+	# ~/tools/suckless_tools/scripts/multi_polybar.sh
+	# notify-send -u low "Activate HDMI-A-0 with ${SELECTED_RESOLUTION} @ ${SELECTED_RATE}Hz"
 fi

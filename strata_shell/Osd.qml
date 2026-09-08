@@ -15,11 +15,11 @@ XPanelWindow {
         top: true
     }
     margins {
-        top: Config.enableFrameBars ? Config.topBarHeight : 0
+        top: Wm.activeWindowFullscreen ? 16 : (Config.enableFrameBars ? Config.topBarHeight : 0)
     }
 
     implicitWidth: 272
-    implicitHeight: root.hasProgressBar ? 82 : 62
+    implicitHeight: root.targetHeight
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
     aboveWindows: true
@@ -176,17 +176,17 @@ XPanelWindow {
                     if (root._wifiInitDone) {
                         if (blocked !== root._wifiBlocked) {
                             if (blocked) {
-                                root.showOsd("󰤮", 0, "Wi-Fi", true, "Disabled", false, Theme.red)
+                                root.showOsd("󰤮", 0, "Wi-Fi Disabled", true, "", false, Theme.red)
                             } else if (state === "COMPLETED" && ssid !== "") {
-                                root.showOsd("󰤨", 0, "Wi-Fi", false, ssid, false, Theme.accent)
+                                root.showOsd("󰤨", 0, ssid, false, "Wi-Fi Connected", false, Theme.accent)
                             } else {
-                                root.showOsd("󰤭", 0, "Wi-Fi", false, "Enabled", false, Theme.disabled)
+                                root.showOsd("󰤭", 0, "Wi-Fi Enabled", false, "", false, Theme.disabled)
                             }
                         } else if (state !== root._wifiState || ssid !== root._wifiSsid) {
                             if (state === "COMPLETED" && ssid !== "") {
-                                root.showOsd("󰤨", 0, "Wi-Fi", false, ssid, false, Theme.accent)
+                                root.showOsd("󰤨", 0, ssid, false, "Wi-Fi Connected", false, Theme.accent)
                             } else if (root._wifiState === "COMPLETED" && state !== "COMPLETED") {
-                                root.showOsd("󰤭", 0, "Wi-Fi", false, "Disconnected", false, Theme.disabled)
+                                root.showOsd("󰤭", 0, "Wi-Fi Disconnected", false, "", false, Theme.disabled)
                             }
                         }
                     }
@@ -329,6 +329,12 @@ XPanelWindow {
         function onPlaybackStateChanged() {
             root.checkTrackChange()
         }
+        function onTrackArtUrlChanged() {
+            if (root.activePlayer && root.activePlayer.trackArtUrl) {
+                root.osdImage = root.activePlayer.trackArtUrl
+            }
+            root.checkTrackChange()
+        }
     }
 
     onActivePlayerChanged: checkTrackChange()
@@ -353,7 +359,7 @@ XPanelWindow {
             return
         }
 
-        if (key !== root._lastTrackKey) {
+        if (key !== root._lastTrackKey || (p.trackArtUrl && root.osdImage !== p.trackArtUrl)) {
             root._lastTrackKey = key
             const art = p.trackArtUrl || ""
             root.showOsd("󰝚", 0, title, false, artist, false, Theme.magenta, 3500, art)
@@ -368,7 +374,8 @@ XPanelWindow {
 
     property string osdIcon: "󰕾"
     property int osdValue: 0
-    readonly property int targetHeight: root.hasProgressBar ? 82 : 62
+    readonly property bool hasArt: root.osdImage !== ""
+    readonly property int targetHeight: root.hasArt ? (root.hasProgressBar ? 92 : 60) : (root.hasProgressBar ? 82 : 60)
 
     visible: slide.y > -root.targetHeight
 
@@ -379,8 +386,8 @@ XPanelWindow {
         height: root.targetHeight
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        topLeftRadius: 0
-        topRightRadius: 0
+        topLeftRadius: Wm.activeWindowFullscreen ? Config.popoutCornerRadius : 0
+        topRightRadius: Wm.activeWindowFullscreen ? Config.popoutCornerRadius : 0
         bottomLeftRadius: Config.popoutCornerRadius
         bottomRightRadius: Config.popoutCornerRadius
         color: Theme.bg
@@ -400,7 +407,7 @@ XPanelWindow {
 
         // Top-left concave fillet (joins TopBar smoothly)
         Shape {
-            visible: Config.enableFrameBars
+            visible: Config.enableFrameBars && !Wm.activeWindowFullscreen
             anchors.right: parent.left
             anchors.top: parent.top
             anchors.topMargin: -1
@@ -426,7 +433,7 @@ XPanelWindow {
 
         // Top-right concave fillet (joins TopBar smoothly)
         Shape {
-            visible: Config.enableFrameBars
+            visible: Config.enableFrameBars && !Wm.activeWindowFullscreen
             anchors.left: parent.right
             anchors.top: parent.top
             anchors.topMargin: -1
@@ -458,18 +465,18 @@ XPanelWindow {
             // Top row: icon/art + title + percentage
             Item {
                 width: parent.width
-                height: 24
+                height: root.hasArt ? 40 : 24
 
                 Item {
                     id: iconBox
-                    width: 24
-                    height: 24
+                    width: root.hasArt ? 40 : 24
+                    height: root.hasArt ? 40 : 24
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
 
                     Text {
                         anchors.centerIn: parent
-                        visible: root.osdImage === "" || artImage.status !== Image.Ready
+                        visible: !root.hasArt || artImage.status !== Image.Ready
                         text: root.osdIcon
                         color: root.osdIconColor
                         font.family: Theme.iconFontFamily
@@ -478,10 +485,10 @@ XPanelWindow {
 
                     Rectangle {
                         anchors.fill: parent
-                        radius: 4
+                        radius: 6
                         clip: true
                         color: Qt.alpha(Theme.fg, 0.08)
-                        visible: root.osdImage !== "" && artImage.status === Image.Ready
+                        visible: root.hasArt && artImage.status === Image.Ready
 
                         Image {
                             id: artImage
@@ -505,19 +512,35 @@ XPanelWindow {
                     font.bold: true
                 }
 
-                Text {
+                Column {
                     anchors.left: iconBox.right
-                    anchors.leftMargin: 8
+                    anchors.leftMargin: 10
                     anchors.right: pctText.visible ? pctText.left : parent.right
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    text: root.osdLabel
-                    color: Theme.fg
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.cardTitleSize
-                    font.bold: true
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
+                    spacing: 2
+
+                    Text {
+                        width: parent.width
+                        text: root.osdLabel
+                        color: Theme.fg
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.cardTitleSize
+                        font.bold: true
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
+                    }
+
+                    Text {
+                        width: parent.width
+                        visible: root.osdSubText !== ""
+                        text: root.osdSubText
+                        color: Qt.alpha(Theme.fg, 0.65)
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 11
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
+                    }
                 }
             }
 
@@ -538,17 +561,6 @@ XPanelWindow {
                     color: root.osdIconColor
                     Behavior on width { NumberAnimation { duration: Config.animDuration } }
                 }
-            }
-
-            // Status text / Subtext
-            Text {
-                visible: root.osdSubText !== "" || !root.hasProgressBar
-                width: parent.width
-                text: root.osdSubText !== "" ? root.osdSubText : (root.osdMuted ? "Muted" : "")
-                color: Qt.alpha(Theme.fg, 0.6)
-                font.family: Theme.fontFamily
-                font.pixelSize: 11
-                elide: Text.ElideRight
             }
         }
     }
